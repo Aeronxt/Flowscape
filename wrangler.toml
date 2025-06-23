@@ -1,0 +1,22 @@
+name = "flowscape"
+compatibility_date = "2024-01-15"
+
+[env.production]
+account_id = ""
+zone_id = ""
+
+[[env.production.routes]]
+pattern = "*flowscape.dev/*"
+zone_name = "flowscape.dev"
+
+[build]
+command = "npm run build"
+cwd = "."
+
+[build.upload]
+format = "modules"
+dir = "./dist"
+main = "./dist/index.html"
+
+[[pages_build_output_dir]]
+value = "dist" 
