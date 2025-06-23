@@ -52,7 +52,7 @@ function App() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<'Australia' | 'Bangladesh' | 'Worldwide' | null>(null);
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   const handleAuthClick = (mode: 'signin' | 'signup') => {
     setAuthMode(mode);
@@ -98,19 +98,7 @@ function App() {
     return () => window.removeEventListener('scroll', throttledHandleScroll);
   }, [lastScrollY]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <motion.div
-          className="text-2xl font-bold text-white"
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          Flowscape
-        </motion.div>
-      </div>
-    );
-  }
+
 
   return (
     <CountryContext.Provider value={{ selectedCountry, setSelectedCountry }}>
