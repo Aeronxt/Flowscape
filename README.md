@@ -122,4 +122,4 @@ This is a private project. For any questions or contributions, please contact th
 
 ---
 
-Built with ❤️ using modern web technologies. 
+Built with ❤️ using modern web technologies. Updated for Cloudflare Pages deployment. 
