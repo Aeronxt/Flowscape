@@ -1435,7 +1435,7 @@ function App() {
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
       />
-      </div>
+    </div>
     </CountryContext.Provider>
   );
 }
