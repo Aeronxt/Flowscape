@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { AuthModal } from './components/AuthModal';
@@ -8,6 +8,16 @@ import { UserMenu } from './components/UserMenu';
 import { ShimmerButton } from './components/magicui/shimmer-button';
 import { InteractiveGridPattern } from './components/ui/interactive-grid-pattern';
 import { ApiIntegrationDemo } from './components/ui/api-integration-demo';
+import { Globe } from './components/magicui/globe';
+
+// Country Context
+const CountryContext = createContext<{
+  selectedCountry: 'Australia' | 'Bangladesh' | 'Worldwide' | null;
+  setSelectedCountry: (country: 'Australia' | 'Bangladesh' | 'Worldwide') => void;
+}>({
+  selectedCountry: null,
+  setSelectedCountry: () => {}
+});
 
 const InteractiveButton = ({ children, onClick, className = "", variant = "primary" }: {
   children: React.ReactNode,
@@ -38,12 +48,55 @@ const InteractiveButton = ({ children, onClick, className = "", variant = "prima
 function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<'Australia' | 'Bangladesh' | 'Worldwide' | null>(null);
   const { user, loading } = useAuth();
 
   const handleAuthClick = (mode: 'signin' | 'signup') => {
     setAuthMode(mode);
     setAuthModalOpen(true);
   };
+
+  // Handle navbar scroll behavior
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+      
+      // Only trigger animation if scroll difference is significant enough
+      if (scrollDifference < 5) return;
+      
+      if (currentScrollY < 20) {
+        // Always show navbar at top
+        setIsNavVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down - hide navbar (only after scrolling past 100px)
+        setIsNavVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - show navbar
+        setIsNavVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    // Throttle scroll events for smoother performance
+    let ticking = false;
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', throttledHandleScroll);
+  }, [lastScrollY]);
 
   if (loading) {
     return (
@@ -60,18 +113,31 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <CountryContext.Provider value={{ selectedCountry, setSelectedCountry }}>
+      <div className="min-h-screen bg-black text-white overflow-x-hidden" style={{ scrollBehavior: 'smooth' }}>
       {/* Smooth Cursor */}
       <SmoothCursor />
       
       {/* Navigation Header */}
       <motion.header 
-        className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+        className="fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4"
         initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
+        animate={{ 
+          y: isNavVisible ? 0 : -100,
+          opacity: isNavVisible ? 1 : 0
+        }}
+        transition={{ 
+          duration: 0.8,
+          ease: [0.25, 0.1, 0.25, 1],
+          type: "tween"
+        }}
+        style={{
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)'
+        }}
       >
-        <nav className="flex items-center justify-between max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto">
+          <nav className="flex items-center justify-between bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl px-4 md:px-6 py-3 shadow-2xl">
           {/* Logo */}
           <motion.div 
             className="flex items-center gap-2"
@@ -80,21 +146,21 @@ function App() {
             <img 
               src="https://wrczctvglyhprlbkogjb.supabase.co/storage/v1/object/public/banklogos//flowscape%20logo%20(1).png" 
               alt="Flowscape Logo" 
-              className="h-8 object-contain opacity-95"
+              className="h-6 md:h-8 object-contain opacity-95"
             />
           </motion.div>
 
-          {/* Navigation Links */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#home" className="text-gray-300 hover:text-white transition-colors">Home</a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a>
-            <a href="#portfolio" className="text-gray-300 hover:text-white transition-colors">Portfolio</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-colors">Contact</a>
-            <a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQ</a>
+            <a href="#home" className="text-gray-300 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); setTimeout(() => document.getElementById('home')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>Home</a>
+            <a href="#about" className="text-gray-300 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>About</a>
+            <a href="#pricing" className="text-gray-300 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>Pricing</a>
+            <a href="#contact" className="text-gray-300 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>Contact</a>
+            <a href="#faq" className="text-gray-300 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); setTimeout(() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>FAQ</a>
           </div>
 
-          {/* Auth Section */}
-          <div className="flex items-center gap-4">
+          {/* Desktop Auth Section */}
+          <div className="hidden md:flex items-center gap-4">
             {user ? (
               <UserMenu />
             ) : (
@@ -118,11 +184,194 @@ function App() {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <motion.button
+            className="md:hidden p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              console.log('Mobile menu clicked, current state:', isMobileMenuOpen);
+              setIsMobileMenuOpen(!isMobileMenuOpen);
+            }}
+          >
+            <motion.div
+              className="w-6 h-6 flex flex-col justify-center items-center"
+              animate={isMobileMenuOpen ? "open" : "closed"}
+            >
+              <motion.span
+                className="w-5 h-0.5 bg-white block mb-1"
+                variants={{
+                  closed: { rotate: 0, y: 0 },
+                  open: { rotate: 45, y: 6 }
+                }}
+                transition={{ duration: 0.3 }}
+              />
+              <motion.span
+                className="w-5 h-0.5 bg-white block mb-1"
+                variants={{
+                  closed: { opacity: 1 },
+                  open: { opacity: 0 }
+                }}
+                transition={{ duration: 0.3 }}
+              />
+              <motion.span
+                className="w-5 h-0.5 bg-white block"
+                variants={{
+                  closed: { rotate: 0, y: 0 },
+                  open: { rotate: -45, y: -6 }
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            </motion.div>
+          </motion.button>
         </nav>
+        </div>
+
+        {/* Mobile Glass Drawer */}
+        <motion.div
+          className="md:hidden fixed inset-0 z-[60]"
+          initial={false}
+          animate={isMobileMenuOpen ? "open" : "closed"}
+          style={{ pointerEvents: isMobileMenuOpen ? 'auto' : 'none' }}
+        >
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0 bg-black/95 backdrop-blur-xl"
+            variants={{
+              open: { opacity: 1, backdropFilter: 'blur(30px) saturate(0%) brightness(30%)' },
+              closed: { opacity: 0, backdropFilter: 'blur(0px)' }
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          {/* Drawer */}
+          <motion.div
+            className="absolute top-20 right-4 left-4 rounded-3xl p-6 shadow-2xl"
+            variants={{
+              open: { 
+                opacity: 1, 
+                y: 0,
+                scale: 1,
+                transition: { 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 30 
+                }
+              },
+              closed: { 
+                opacity: 0, 
+                y: -20,
+                scale: 0.95,
+                transition: { 
+                  duration: 0.3 
+                }
+              }
+            }}
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.98) 0%, rgba(10, 10, 10, 1) 50%, rgba(0, 0, 0, 0.99) 100%)',
+              backdropFilter: 'blur(40px) saturate(0%) brightness(50%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(0%) brightness(50%)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: `
+                0 25px 50px -12px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+                inset 0 0 30px rgba(0, 0, 0, 0.5)
+              `,
+            }}
+          >
+            {/* Navigation Links */}
+            <div className="space-y-4 mb-6">
+              {[
+                { name: 'Home', id: 'home' },
+                { name: 'About', id: 'about' },
+                { name: 'Pricing', id: 'pricing' },
+                { name: 'Contact', id: 'contact' },
+                { name: 'FAQ', id: 'faq' }
+              ].map((item, index) => (
+                <motion.a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className="block text-white text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/10 transition-all duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTimeout(() => {
+                      document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      setIsMobileMenuOpen(false);
+                    }, 150);
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ 
+                    opacity: isMobileMenuOpen ? 1 : 0, 
+                    x: isMobileMenuOpen ? 0 : 20 
+                  }}
+                  transition={{ 
+                    duration: 0.3, 
+                    delay: isMobileMenuOpen ? index * 0.1 : 0 
+                  }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {item.name}
+                </motion.a>
+              ))}
+            </div>
+
+            {/* Mobile Auth Buttons */}
+            {!user && (
+              <div className="space-y-3 pt-4 border-t border-white/20">
+                <motion.button
+                  className="w-full text-gray-300 hover:text-white transition-colors py-3 px-4 rounded-xl hover:bg-white/10 font-medium"
+                  onClick={() => {
+                    handleAuthClick('signin');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ 
+                    opacity: isMobileMenuOpen ? 1 : 0, 
+                    y: isMobileMenuOpen ? 0 : 20 
+                  }}
+                  transition={{ duration: 0.3, delay: isMobileMenuOpen ? 0.5 : 0 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Sign In
+                </motion.button>
+                <motion.button
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
+                  onClick={() => {
+                    handleAuthClick('signup');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ 
+                    opacity: isMobileMenuOpen ? 1 : 0, 
+                    y: isMobileMenuOpen ? 0 : 20 
+                  }}
+                  transition={{ duration: 0.3, delay: isMobileMenuOpen ? 0.6 : 0 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Get Started
+                </motion.button>
+              </div>
+            )}
+
+            {/* User Menu for Mobile */}
+            {user && (
+              <div className="pt-4 border-t border-white/20">
+                <UserMenu />
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
       </motion.header>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-12">
+      <section id="home" className="relative min-h-screen flex items-center justify-center px-4 md:px-6 pt-16 md:pt-12">
         {/* Interactive Grid Background */}
         <InteractiveGridPattern
           width={50}
@@ -138,30 +387,104 @@ function App() {
             <div className="w-[1000px] h-[600px] rounded-full bg-gradient-to-t from-purple-600/40 via-green-600/30 to-transparent blur-3xl"></div>
           </div>
           {/* Company logos in the orb */}
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex items-center gap-16 opacity-40">
-            <div className="text-xl font-bold text-white/60">BOGO</div>
-            <div className="text-xl font-bold text-white/60">LOGO IPSUM</div>
-            <div className="text-xl font-bold text-white/60">IP?</div>
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-full max-w-4xl overflow-hidden">
+            <motion.div 
+              className="flex items-center gap-6 md:gap-8"
+              animate={{ x: [0, -700] }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 40,
+                  ease: "linear",
+                },
+              }}
+              style={{ width: 'calc(200%)' }}
+            >
+              {/* First set of logos */}
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//BKash_Logo_icon-700x662.png" 
+                alt="bKash" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//link_stripe-logo_brandlogos.net_scfln.png" 
+                alt="Stripe" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//logo.png" 
+                alt="Company Logo" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Paypal_2014_logo.png" 
+                alt="PayPal" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Stripe_Logo,_revised_2016.svg.png" 
+                alt="Stripe" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//vectorseek.com-Nagad-Logo-Vector.png" 
+                alt="Nagad" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              
+              {/* Duplicate set for seamless loop */}
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//BKash_Logo_icon-700x662.png" 
+                alt="bKash" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//link_stripe-logo_brandlogos.net_scfln.png" 
+                alt="Stripe" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//logo.png" 
+                alt="Company Logo" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Paypal_2014_logo.png" 
+                alt="PayPal" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Stripe_Logo,_revised_2016.svg.png" 
+                alt="Stripe" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+              <img 
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//vectorseek.com-Nagad-Logo-Vector.png" 
+                alt="Nagad" 
+                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
+              />
+            </motion.div>
           </div>
         </div>
 
-        <div className="relative z-10 text-center max-w-6xl mx-auto -mt-16">
+        <div className="relative z-10 text-center max-w-6xl mx-auto -mt-8 md:-mt-16">
           {/* Badge */}
           <motion.div
-            className="inline-flex items-center gap-2 bg-purple-600/30 border border-purple-500/40 rounded-full px-4 py-2 mb-12"
+            className="inline-flex items-center gap-2 bg-purple-600/30 border border-purple-500/40 rounded-full px-3 md:px-4 py-2 mb-8 md:mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-medium">2025</span>
-            <AnimatedShinyText className="text-sm font-medium">
+            <span className="bg-purple-600 text-white text-xs px-2 md:px-3 py-1 rounded-full font-medium">2025</span>
+            <AnimatedShinyText className="text-xs md:text-sm font-medium">
               Next Gen-Development
             </AnimatedShinyText>
           </motion.div>
 
           {/* Main Heading */}
           <motion.h1
-            className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 leading-tight tracking-tight px-2"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -172,7 +495,7 @@ function App() {
 
           {/* Subtitle */}
           <motion.div
-            className="text-lg md:text-xl text-gray-400 mb-12 max-w-3xl mx-auto font-medium"
+            className="text-base md:text-lg lg:text-xl text-gray-400 mb-8 md:mb-12 max-w-3xl mx-auto font-medium px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -182,31 +505,35 @@ function App() {
 
           {/* CTA Buttons */}
           <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <InteractiveButton 
-              onClick={() => handleAuthClick('signup')}
+              onClick={() => {
+                setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+              }}
               variant="primary"
-              className="px-8 py-3"
+              className="w-full sm:w-auto px-6 md:px-8 py-3 text-sm md:text-base"
             >
               Connect With Us
             </InteractiveButton>
             <InteractiveButton 
-              onClick={() => handleAuthClick('signin')}
+              onClick={() => {
+                setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+              }}
               variant="secondary"
-              className="px-8 py-3"
+              className="w-full sm:w-auto px-6 md:px-8 py-3 text-sm md:text-base"
             >
-              What is Nubien?
+              What is Flowscape?
             </InteractiveButton>
           </motion.div>
         </div>
       </section>
 
       {/* About Us Section */}
-      <section className="relative py-32 px-6 overflow-hidden">
+      <section id="about" className="relative py-16 md:py-32 px-4 md:px-6 overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/50 to-black"></div>
         
@@ -225,7 +552,7 @@ function App() {
             ].map((paragraph, index) => (
                              <motion.p
                  key={index}
-                 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-300 leading-relaxed hover:text-gray-200 transition-all duration-500 cursor-default"
+                 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed hover:text-gray-200 transition-all duration-500 cursor-default"
                 initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
                 whileInView={{ 
                   opacity: 1, 
@@ -254,7 +581,7 @@ function App() {
       </section>
 
       {/* Services Section */}
-      <section className="relative py-32 px-6 overflow-hidden" id="services">
+      <section className="relative py-16 md:py-32 px-4 md:px-6 overflow-hidden" id="services">
         {/* Background Grid Pattern */}
         <InteractiveGridPattern
           width={40}
@@ -392,10 +719,10 @@ function App() {
           </motion.div>
 
           {/* Main Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mb-12 md:mb-16">
             {/* Seamless API Integrations */}
             <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
+              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -412,10 +739,10 @@ function App() {
                 </svg>
               </motion.div>
               
-              <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-300 transition-colors">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 group-hover:text-purple-300 transition-colors">
                 Seamless API Integrations
               </h3>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+              <p className="text-base md:text-lg text-gray-400 mb-6 md:mb-8 leading-relaxed">
                 Connect with any API or service of your choice. Our platform is currently ready to be shipped with robust integration capabilities.
               </p>
               
@@ -427,7 +754,7 @@ function App() {
 
             {/* Trusted Authentication */}
             <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
+              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -475,7 +802,7 @@ function App() {
 
             {/* Premium UI/UX Design */}
             <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
+              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -613,7 +940,7 @@ function App() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-32 px-6 relative">
+      <section id="pricing" className="py-32 px-6 relative">
         <InteractiveGridPattern
           width={40}
           height={40}
@@ -661,6 +988,8 @@ function App() {
           >
             {/* Plan Toggle */}
             <PlanToggle />
+            {/* Country Selector */}
+            <CountrySelector />
           </motion.div>
 
           {/* Pricing Cards */}
@@ -769,15 +1098,439 @@ function App() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section id="faq" className="py-32 px-6 relative">
+        <InteractiveGridPattern
+          width={60}
+          height={60}
+          squares={[15, 8]}
+          className="opacity-5"
+          squaresClassName="stroke-gray-800/20 hover:fill-purple-500/5"
+        />
+        
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Left Column - Header */}
+            <motion.div
+              className="lg:sticky lg:top-32"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              {/* Badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-2 mb-8"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="text-purple-300 font-medium text-sm">FAQ</span>
+              </motion.div>
+
+              <motion.h2
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                Frequently
+                <br />
+                <span className="text-gray-500">Asked Questions</span>
+              </motion.h2>
+
+              <motion.p
+                className="text-lg text-gray-400 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                Have questions? Our FAQ section has you covered with quick answers to the most common inquiries.
+              </motion.p>
+            </motion.div>
+
+            {/* Right Column - FAQ Items */}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <FAQAccordion />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-32 px-6 relative overflow-hidden bg-black">
+        {/* Subtle animated background orbs */}
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute -top-40 -left-40 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.05, 0.15, 0.05],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10 text-center">
+          {/* Badge */}
+          <motion.div
+            className="inline-flex items-center gap-2 bg-purple-600/30 border border-purple-500/40 rounded-full px-4 py-2 mb-8"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center relative">
+              <span className="text-white text-xs font-bold">24/7</span>
+              <motion.div
+                className="absolute inset-0 bg-purple-400 rounded-full"
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </div>
+            <span className="text-purple-200 font-medium text-sm">Collaborate With Us</span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h2
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Have Any Doubts? We are Ready to Help.
+          </motion.h2>
+
+          {/* Subtitle */}
+          <motion.p
+            className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            Whether you need guidance, support, or a fresh start, our team is ready to assist you.
+          </motion.p>
+
+          {/* CTA Button */}
+          <motion.button
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-4 rounded-2xl mb-16 transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Fill The Form Out!
+          </motion.button>
+
+          {/* Contact Form */}
+          <ContactForm />
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-32 px-6 relative overflow-hidden bg-black">
+        {/* Subtle animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.1, 0.05, 0.1],
+              x: [0, 50, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.05, 0.02, 0.05],
+              x: [0, -40, 0],
+              y: [0, 20, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10 text-center">
+          {/* Badge */}
+          <motion.div
+            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="text-white/90 font-medium text-sm">Become a Part of Us</span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h2
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Ready to Elevate Your Brand
+            <br />
+            <span className="text-white/70">with Next-Gen Innovation?</span>
+          </motion.h2>
+
+          {/* Subtitle */}
+          <motion.p
+            className="text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            Ready to take the next step? Join us now and start transforming your vision into reality with expert support.
+          </motion.p>
+
+          {/* CTA Button */}
+          <motion.button
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-12 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Get Started
+          </motion.button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-black border-t border-gray-800/50 py-16 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+            {/* Brand Section */}
+            <motion.div
+              className="lg:col-span-1"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-6">
+                <img 
+                  src="https://wrczctvglyhprlbkogjb.supabase.co/storage/v1/object/public/banklogos//flowscape%20logo%20(1).png" 
+                  alt="Flowscape Logo" 
+                  className="w-32 h-auto"
+                />
+              </div>
+            </motion.div>
+
+            {/* View */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-white font-semibold text-lg mb-6">View</h3>
+              <ul className="space-y-4">
+                {['Home', 'About', 'Pricing', 'Contact'].map((item) => (
+                  <motion.li key={item} whileHover={{ x: 5 }}>
+                    <a href={`#${item.toLowerCase()}`} className="text-gray-400 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' }); }}>
+                      {item}
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Social */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-white font-semibold text-lg mb-6">Social</h3>
+              <ul className="space-y-4">
+                {[
+                  { name: 'Twitter (X)', url: '#' },
+                  { name: 'Instagram', url: '#' },
+                  { name: 'Youtube', url: '#' }
+                ].map((item) => (
+                  <motion.li key={item.name} whileHover={{ x: 5 }}>
+                    <a href={item.url} className="text-gray-400 hover:text-white transition-colors">
+                      {item.name}
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+
+          {/* Bottom Section */}
+          <motion.div
+            className="pt-8 border-t border-gray-800/50"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-gray-500 text-sm">
+                © 2025 Aeron X Technologies. All rights reserved.
+              </p>
+              <div className="flex items-center gap-6">
+                <a href="#privacy" className="text-gray-500 hover:text-white text-sm transition-colors">
+                  Privacy Policy
+                </a>
+                <a href="#terms" className="text-gray-500 hover:text-white text-sm transition-colors">
+                  Terms of Service
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </footer>
+
       {/* Auth Modal */}
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
       />
-    </div>
+      </div>
+    </CountryContext.Provider>
   );
 }
+
+// Country Selector Component
+const CountrySelector = () => {
+  const { selectedCountry, setSelectedCountry } = useContext(CountryContext);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const countries = [
+    { name: 'Australia', flag: '🇦🇺' },
+    { name: 'Bangladesh', flag: '🇧🇩' },
+    { name: 'Worldwide', flag: '🌍' }
+  ] as const;
+
+  return (
+    <div className="relative">
+      <motion.button
+        className="flex items-center gap-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-full px-6 py-3 text-white hover:bg-gray-800/50 transition-all duration-300"
+        onClick={() => setIsOpen(!isOpen)}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <span className="text-lg">
+          {selectedCountry ? countries.find(c => c.name === selectedCountry)?.flag : '🌐'}
+        </span>
+        <span className="font-medium text-sm">{selectedCountry || 'Select Country'}</span>
+        <motion.svg
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </motion.svg>
+      </motion.button>
+
+      {/* Dropdown */}
+      <motion.div
+        className="absolute top-full left-0 right-0 mt-2 bg-gray-900/90 backdrop-blur-md border border-gray-800/50 rounded-2xl overflow-hidden shadow-2xl z-50"
+        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+        animate={{ 
+          opacity: isOpen ? 1 : 0, 
+          y: isOpen ? 0 : -10,
+          scale: isOpen ? 1 : 0.95,
+          pointerEvents: isOpen ? 'auto' : 'none'
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        {countries.map((country, index) => (
+          <motion.button
+            key={country.name}
+            className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-800/50 transition-colors"
+            onClick={() => {
+              setSelectedCountry(country.name);
+              setIsOpen(false);
+            }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ 
+              opacity: isOpen ? 1 : 0,
+              x: isOpen ? 0 : -20
+            }}
+            transition={{ duration: 0.3, delay: isOpen ? index * 0.1 : 0 }}
+            whileHover={{ x: 5 }}
+          >
+            <span className="text-lg">{country.flag}</span>
+            <span className="font-medium text-sm text-white">{country.name}</span>
+            {selectedCountry === country.name && (
+              <motion.div
+                className="ml-auto w-2 h-2 bg-purple-500 rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
+          </motion.button>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
 
 // Pricing Components
 const PlanToggle = () => {
@@ -817,11 +1570,74 @@ const PlanToggle = () => {
 };
 
 const PricingCards = () => {
+  const { selectedCountry } = useContext(CountryContext);
+
+  // Don't render pricing cards if no country is selected
+  if (!selectedCountry) {
+    return (
+      <div className="max-w-5xl mx-auto mb-16 text-center">
+        <motion.div
+          className="bg-gray-900/40 backdrop-blur-sm rounded-2xl p-12 border border-gray-800/50"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <motion.div
+            className="relative w-48 h-48 mx-auto mb-6"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Globe
+              className="!max-w-[192px] !aspect-square"
+              config={{
+                width: 800,
+                height: 800,
+                onRender: () => {},
+                devicePixelRatio: 2,
+                phi: 0,
+                theta: 0.3,
+                dark: 0,
+                diffuse: 0.4,
+                mapSamples: 16000,
+                mapBrightness: 1.2,
+                baseColor: [1, 1, 1],
+                markerColor: [147 / 255, 51 / 255, 234 / 255],
+                glowColor: [1, 1, 1],
+                markers: [
+                  { location: [-33.8688, 151.2093], size: 0.08 }, // Sydney, Australia
+                  { location: [23.8103, 90.4125], size: 0.08 }, // Dhaka, Bangladesh
+                  { location: [40.7128, -74.006], size: 0.06 }, // New York, USA
+                  { location: [51.5074, -0.1278], size: 0.06 }, // London, UK
+                  { location: [35.6762, 139.6503], size: 0.06 }, // Tokyo, Japan
+                  { location: [48.8566, 2.3522], size: 0.05 }, // Paris, France
+                  { location: [-23.5505, -46.6333], size: 0.05 }, // São Paulo, Brazil
+                ],
+              }}
+            />
+          </motion.div>
+          <h3 className="text-2xl font-bold text-white mb-4">Choose Your Region</h3>
+          <p className="text-gray-400 text-lg">
+            Select your country above to view pricing in your local currency
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  const getPricing = (planType: 'mini' | 'basic' | 'pro') => {
+    const pricing = {
+      Australia: { mini: 'A$8', basic: 'A$20', pro: 'A$40' },
+      Bangladesh: { mini: '৳600', basic: '৳1000', pro: '৳3000' },
+      Worldwide: { mini: '$8', basic: '$20', pro: '$40' }
+    };
+    return pricing[selectedCountry][planType];
+  };
+
   const plans = [
     {
       name: "Mini",
       subtitle: "Landing pages",
-      price: "A$8",
+      price: getPricing('mini'),
       period: "/month",
       description: "2 pages",
       features: [
@@ -836,7 +1652,7 @@ const PricingCards = () => {
     {
       name: "Basic",
       subtitle: "Basic sites",
-      price: "A$20",
+      price: getPricing('basic'),
       period: "/month",
       description: "1000 pages",
       features: [
@@ -851,7 +1667,7 @@ const PricingCards = () => {
     {
       name: "Pro",
       subtitle: "Growing sites",
-      price: "A$40",
+      price: getPricing('pro'),
       period: "/month",
       description: "10,000 pages",
       features: [
@@ -1211,5 +2027,260 @@ const ComparisonGrid = () => {
     </motion.div>
   );
 };
+
+const FAQAccordion = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
+
+  const faqData = [
+    {
+      question: "What do I need to get started?",
+      answer: "Getting started with Flowscape is simple! You just need a modern web browser and an internet connection. Our platform is designed to be user-friendly, so no technical expertise is required. Once you sign up, you'll have access to our intuitive dashboard where you can begin building your project immediately."
+    },
+    {
+      question: "What kind of customization is available?",
+      answer: "Flowscape offers extensive customization options including custom branding, color schemes, layouts, and functionality. You can modify templates, add custom code, integrate third-party services, and create unique user experiences tailored to your specific needs. Our flexible architecture supports both simple modifications and complex customizations."
+    },
+    {
+      question: "How easy is it to edit for beginners?",
+      answer: "Very easy! Flowscape is built with beginners in mind. Our drag-and-drop interface, visual editor, and pre-built components make it simple to create professional websites without coding knowledge. We also provide comprehensive tutorials, documentation, and support to help you get started quickly."
+    },
+    {
+      question: "Let me know more about moneyback guarantee?",
+      answer: "We offer a 30-day money-back guarantee on all our plans. If you're not completely satisfied with Flowscape within the first 30 days of your purchase, simply contact our support team and we'll provide a full refund, no questions asked. This guarantee reflects our confidence in the quality and value of our platform."
+    },
+    {
+      question: "Do I need to know how to code?",
+      answer: "Not at all! Flowscape is designed for users of all skill levels. While coding knowledge can be helpful for advanced customizations, it's not required. Our visual editor, pre-built templates, and intuitive interface allow you to create stunning websites without writing a single line of code. However, if you do know how to code, you have full access to customize everything."
+    },
+    {
+      question: "What will I get after purchasing the template?",
+      answer: "After purchase, you'll receive immediate access to the complete Flowscape template package including all source files, documentation, installation guide, and lifetime updates. You'll also get access to our premium support community, exclusive resources, and priority customer support to help you make the most of your investment."
+    }
+  ];
+
+  const toggleAccordion = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div className="space-y-4">
+      {faqData.map((item, index) => (
+        <motion.div
+          key={index}
+          className="bg-gray-900/40 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden hover:border-gray-700/50 transition-all duration-300"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          whileHover={{ scale: 1.01 }}
+        >
+          <motion.button
+            className="w-full px-6 py-6 text-left flex items-center justify-between group"
+            onClick={() => toggleAccordion(index)}
+            whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.02)" }}
+          >
+            <span className="text-lg font-medium text-white group-hover:text-purple-300 transition-colors pr-4">
+              {item.question}
+            </span>
+            
+            <motion.div
+              className="flex-shrink-0 w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center border border-purple-500/30 group-hover:bg-purple-600/30 transition-colors"
+              animate={{ rotate: openIndex === index ? 45 : 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <svg 
+                className="w-4 h-4 text-purple-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </motion.div>
+          </motion.button>
+
+          <motion.div
+            initial={false}
+            animate={{
+              height: openIndex === index ? "auto" : 0,
+              opacity: openIndex === index ? 1 : 0
+            }}
+            transition={{ 
+              duration: 0.4, 
+              ease: "easeInOut",
+              opacity: { duration: 0.3 }
+            }}
+            className="overflow-hidden"
+          >
+            <motion.div
+              className="px-6 pb-6"
+              initial={{ y: -10 }}
+              animate={{ y: openIndex === index ? 0 : -10 }}
+              transition={{ duration: 0.3, delay: openIndex === index ? 0.1 : 0 }}
+            >
+              <div className="border-t border-gray-800/30 pt-4">
+                <p className="text-gray-400 leading-relaxed">
+                  {item.answer}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Form submitted:', formData);
+  };
+
+  return (
+    <motion.div
+      className="bg-black/40 backdrop-blur-sm border border-gray-800/50 rounded-3xl p-8 max-w-3xl mx-auto"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.8 }}
+      viewport={{ once: true }}
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name Fields Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* First Name */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
+            viewport={{ once: true }}
+          >
+            <label className="block text-white text-sm font-medium mb-3">
+              First name*
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              placeholder="Jane"
+              className="w-full bg-gray-900/60 border border-gray-700/50 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+              required
+            />
+          </motion.div>
+
+          {/* Last Name */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 1.1 }}
+            viewport={{ once: true }}
+          >
+            <label className="block text-white text-sm font-medium mb-3">
+              Last Name*
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              placeholder="Smith"
+              className="w-full bg-gray-900/60 border border-gray-700/50 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+              required
+            />
+          </motion.div>
+        </div>
+
+        {/* Email Field */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.2 }}
+          viewport={{ once: true }}
+        >
+          <label className="block text-white text-sm font-medium mb-3">
+            How can we reach you?*
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="jane@example.com"
+            className="w-full bg-gray-900/60 border border-gray-700/50 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+            required
+          />
+        </motion.div>
+
+        {/* Message Field */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.3 }}
+          viewport={{ once: true }}
+        >
+          <label className="block text-white text-sm font-medium mb-3">
+            Tell us about your project
+          </label>
+          <textarea
+            name="message"
+            value={formData.message}
+            onChange={handleInputChange}
+            placeholder="Describe your project, goals, and how we can help you..."
+            rows={5}
+            className="w-full bg-gray-900/60 border border-gray-700/50 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300 resize-none"
+          />
+        </motion.div>
+
+        {/* Submit Button */}
+        <motion.div
+          className="pt-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.4 }}
+          viewport={{ once: true }}
+        >
+          <motion.button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Send Message
+          </motion.button>
+        </motion.div>
+
+        {/* Additional Info */}
+        <motion.p
+          className="text-gray-400 text-sm text-center pt-4"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.5 }}
+          viewport={{ once: true }}
+        >
+          We'll get back to you within 24 hours. Your privacy is important to us.
+        </motion.p>
+      </form>
+    </motion.div>
+  );
+};
+
+
 
 export default App;

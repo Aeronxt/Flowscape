@@ -19,6 +19,19 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Account for fixed header */
+  }
+
+  /* Enhanced smooth scrolling with easing */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    * {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
+    }
   }
 
   body {
