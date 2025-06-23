@@ -119,13 +119,9 @@ function App() {
           ease: [0.25, 0.1, 0.25, 1],
           type: "tween"
         }}
-        style={{
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)'
-        }}
       >
         <div className="max-w-7xl mx-auto">
-          <nav className="flex items-center justify-between bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl px-4 md:px-6 py-3 shadow-2xl">
+          <nav className="flex items-center justify-between bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl px-4 md:px-6 py-3 shadow-2xl overflow-hidden">
           {/* Logo */}
           <motion.div 
             className="flex items-center gap-2"
