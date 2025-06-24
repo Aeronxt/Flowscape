@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { AuthModal } from './components/AuthModal';
@@ -52,6 +52,7 @@ function App() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<'Australia' | 'Bangladesh' | 'Worldwide' | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<'personal' | 'business'>('personal');
   const { user } = useAuth();
 
   const handleAuthClick = (mode: 'signin' | 'signup') => {
@@ -102,6 +103,7 @@ function App() {
 
   return (
     <CountryContext.Provider value={{ selectedCountry, setSelectedCountry }}>
+      <PlanContext.Provider value={{ selectedPlan, setSelectedPlan }}>
       <div className="min-h-screen bg-black text-white overflow-x-hidden" style={{ scrollBehavior: 'smooth' }}>
       {/* Smooth Cursor */}
       <SmoothCursor />
@@ -522,6 +524,19 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/50 to-black"></div>
         
         <div className="relative z-10 max-w-4xl mx-auto">
+          {/* About Us Badge */}
+          <motion.div
+            className="inline-flex items-center gap-2 bg-green-600/30 border border-green-500/40 rounded-full px-3 md:px-4 py-2 mb-12 md:mb-16 mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="bg-green-600 text-white text-xs px-2 md:px-3 py-1 rounded-full font-medium">?</span>
+            <AnimatedShinyText className="text-xs md:text-sm font-medium">
+              About Us
+            </AnimatedShinyText>
+          </motion.div>
+
           <motion.div
             className="text-left space-y-8"
             initial={{ opacity: 0 }}
@@ -988,8 +1003,10 @@ function App() {
             viewport={{ once: true }}
           />
 
-          {/* Feature Comparison Table */}
+          {/* Feature Comparison Table - Hidden on Mobile */}
+          <div className="hidden md:block">
           <FeatureTable />
+          </div>
 
           {/* Final CTA */}
           <motion.div
@@ -1432,6 +1449,7 @@ function App() {
         initialMode={authMode}
       />
     </div>
+      </PlanContext.Provider>
     </CountryContext.Provider>
   );
 }
@@ -1516,9 +1534,18 @@ const CountrySelector = () => {
   );
 };
 
+// Plan Context
+const PlanContext = createContext<{
+  selectedPlan: 'personal' | 'business';
+  setSelectedPlan: (plan: 'personal' | 'business') => void;
+}>({
+  selectedPlan: 'personal',
+  setSelectedPlan: () => {}
+});
+
 // Pricing Components
 const PlanToggle = () => {
-  const [selectedPlan, setSelectedPlan] = useState<'personal' | 'business'>('personal');
+  const { selectedPlan, setSelectedPlan } = useContext(PlanContext);
 
   return (
     <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-full p-1">
@@ -1555,6 +1582,23 @@ const PlanToggle = () => {
 
 const PricingCards = () => {
   const { selectedCountry } = useContext(CountryContext);
+  const { selectedPlan } = useContext(PlanContext);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [pricingSectionRef, setPricingSectionRef] = useState<HTMLDivElement | null>(null);
+
+  // Track scrolling within pricing section for mobile sticky behavior
+  useEffect(() => {
+    if (!pricingSectionRef) return;
+
+    const handleScroll = () => {
+      const rect = pricingSectionRef.getBoundingClientRect();
+      const isInView = rect.top <= 100 && rect.bottom >= 100;
+      setIsScrolling(isInView && window.innerWidth <= 768);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pricingSectionRef]);
 
   // Don't render pricing cards if no country is selected
   if (!selectedCountry) {
@@ -1608,65 +1652,292 @@ const PricingCards = () => {
     );
   }
 
-  const getPricing = (planType: 'mini' | 'basic' | 'pro') => {
+  const getPricing = (planType: 'lite' | 'plus' | 'pro' | 'startup' | 'risingStar' | 'enterprise') => {
+    if (selectedPlan === 'business') {
+      const businessPricing = {
+        Australia: { startup: 'A$45', risingStar: 'A$75', enterprise: 'Custom' },
+        Bangladesh: { startup: '৳1399', risingStar: '৳4999', enterprise: 'Custom' },
+        Worldwide: { startup: '$45', risingStar: '$75', enterprise: 'Custom' }
+      };
+      return businessPricing[selectedCountry][planType as 'startup' | 'risingStar' | 'enterprise'];
+    } else {
     const pricing = {
-      Australia: { mini: 'A$8', basic: 'A$20', pro: 'A$40' },
-      Bangladesh: { mini: '৳600', basic: '৳1000', pro: '৳3000' },
-      Worldwide: { mini: '$8', basic: '$20', pro: '$40' }
-    };
-    return pricing[selectedCountry][planType];
+        Australia: { lite: 'A$9', plus: 'A$15', pro: 'A$35' },
+        Bangladesh: { lite: '৳600', plus: '৳1200', pro: '৳3500' },
+        Worldwide: { lite: '$9', plus: '$15', pro: '$35' }
+      };
+      return pricing[selectedCountry][planType as 'lite' | 'plus' | 'pro'];
+    }
   };
 
-  const plans = [
+  const getCustomDomainPricing = () => {
+    if (selectedCountry === 'Bangladesh') {
+      return '৳1200';
+    }
+    return 'A$20';
+  };
+
+  const getAddOnText = () => {
+    if (selectedCountry === 'Bangladesh') {
+      return "Add on available ৳3500 For Increased limits";
+    }
+    return "Add on available A$30 For Increased limits";
+  };
+
+  const plans = selectedPlan === 'business' ? [
     {
-      name: "Mini",
-      subtitle: "Landing pages",
-      price: getPricing('mini'),
+      name: "Startup",
+      subtitle: "Perfect for startups",
+      price: getPricing('startup'),
       period: "/month",
-      description: "2 pages",
+      description: "4 Pages + Ecommerce",
       features: [
-        "2 pages",
-        "10 GB bandwidth",
-        "Custom domain"
+        "4 Pages + Ecommerce",
+        "2GB Storage",
+        selectedCountry === 'Bangladesh' 
+          ? "Bkash + Nagad + SSL Commerce" 
+          : "Stripe + Paypal + (Bangladesh payments)",
+        "6-12 Days Standard Delivery",
+        "10 Team Members Dashboard"
       ],
       cta: "Get started",
       popular: false,
-      monthly: true
+      monthly: true,
+      includesEverythingFrom: null
     },
     {
-      name: "Basic",
-      subtitle: "Basic sites",
-      price: getPricing('basic'),
+      name: "Rising Star",
+      subtitle: "Best for growing businesses",
+      price: getPricing('risingStar'),
       period: "/month",
-      description: "1000 pages",
+      description: "10 Pages + 1 Bonus + Ecommerce",
       features: [
-        "1000 pages",
-        "50 GB bandwidth",
-        "Password protect"
-      ],
-      cta: "Get started",
-      popular: false,
-      monthly: true
-    },
-    {
-      name: "Pro",
-      subtitle: "Growing sites",
-      price: getPricing('pro'),
-      period: "/month",
-      description: "10,000 pages",
-      features: [
-        "10,000 pages",
-        "100 GB bandwidth",
-        "10 CMS collections"
+        "10 Pages + 1 Bonus + Ecommerce",
+        "5GB Storage",
+        "Split Payment + BNPL",
+        "10-14 Days Standard Delivery",
+        "25 Team Members Dashboard"
       ],
       cta: "Get started",
       popular: true,
-      monthly: true
+      monthly: true,
+      includesEverythingFrom: null
+    },
+    {
+      name: "Enterprise",
+      subtitle: "For large enterprises",
+      price: getPricing('enterprise'),
+      period: "",
+      description: "Custom Solution",
+      features: [
+        "Custom Pages & Storage",
+        "Custom Payment Gateways",
+        "Custom Delivery Time",
+        "Custom Team Access",
+        "Custom Features & Support"
+      ],
+      cta: "Contact Sales",
+      popular: false,
+      monthly: false,
+      includesEverythingFrom: null
+    }
+  ] : [
+    {
+      name: "Lite",
+      subtitle: "Perfect for getting started",
+      price: getPricing('lite'),
+      period: "/month",
+      description: "Interactive Blog + 1 Page",
+      features: [
+        "Interactive Blog + 1 Page",
+        "500MB Storage",
+        `Custom Domain +${getCustomDomainPricing()}`,
+        "3-7 Days Standard Delivery",
+        "1 Dashboard Access"
+      ],
+      cta: "Get started",
+      popular: false,
+      monthly: true,
+      includesEverythingFrom: null
+    },
+    {
+      name: "Plus",
+      subtitle: "Best for small businesses",
+      price: getPricing('plus'),
+      period: "/month",
+      description: "4 Pages + 1 Bonus",
+      features: [
+        "1GB Storage",
+        "Google Adsense Monetization",
+        "Custom Domain Included",
+        "Enhanced Database (100K users)",
+        "2 Team Members"
+      ],
+      cta: "Get started",
+      popular: true,
+      monthly: true,
+      includesEverythingFrom: "Lite"
+    },
+    {
+      name: "Pro",
+      subtitle: "For growing businesses",
+      price: getPricing('pro'),
+      period: "/month",
+      description: "10+ Pages + 1 Bonus",
+      features: [
+        "Max 8 Edits/Month",
+        "3 Team Members",
+        "Database Access",
+        "Express Delivery (3-7 Days)",
+        "Premium Support"
+      ],
+      cta: "Get started",
+      popular: false,
+      monthly: true,
+      includesEverythingFrom: "Plus"
+    }
+  ];
+
+  const getDomainPricing = () => {
+    if (selectedCountry === 'Bangladesh') {
+      return "+৳1200 (1 Year)";
+    }
+    return "+A$20 (1 Year)";
+  };
+
+  const featureCategories = selectedPlan === 'business' ? [
+    {
+      name: "📄 Pages & Content",
+      features: [
+        { name: "Pages", startup: "4 Pages + Ecommerce", risingStar: "10 Pages + 1 bonus + Ecommerce", enterprise: "Custom" },
+        { name: "Storage", startup: "2 GB", risingStar: "5GB", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "💳 Payment Gateway",
+      features: [
+        { name: "Payment Gateway", startup: selectedCountry === 'Bangladesh' ? "Bkash + Nagad + SSL" : "Stripe + Paypal", risingStar: "All Payment Methods", enterprise: "Custom" },
+        { name: "Split Payment", startup: false, risingStar: true, enterprise: true },
+        { name: "BNPL", startup: false, risingStar: true, enterprise: true }
+      ]
+    },
+    {
+      name: "📈 Monetization & SEO",
+      features: [
+        { name: "Monetization", startup: "Google Adsense", risingStar: "Google Adsense", enterprise: "Custom" },
+        { name: "SEO", startup: "Optimized", risingStar: "Optimized", enterprise: "Optimized" }
+      ]
+    },
+    {
+      name: "⏰ Delivery Time",
+      features: [
+        { name: "Standard Delivery", startup: "6-12 Days", risingStar: "10-14 Days", enterprise: "Custom" },
+        { name: "Express Delivery", startup: "5-7 Days", risingStar: "6-12 Days", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "✨ Features",
+      features: [
+        { name: "Design & Code", startup: "Interactive Design + Custom Code", risingStar: "Interactive Design + Custom Code", enterprise: "Custom" },
+        { name: "Analytics & Tools", startup: "30-day analytics + Popup + Cookie banner", risingStar: "30-day analytics + Popup + Cookie banner", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "🌐 Domain & Integration",
+      features: [
+        { name: "Custom Domain", startup: "Included", risingStar: "Included", enterprise: "Included" },
+        { name: "BYO Domain", startup: true, risingStar: true, enterprise: true },
+        { name: "Social Media Integration", startup: true, risingStar: true, enterprise: true }
+      ]
+    },
+    {
+      name: "🛠️ Support & Edits",
+      features: [
+        { name: "Support", startup: "24/7 Included", risingStar: "24/7 Included", enterprise: "24/7 Included" },
+        { name: "Edits", startup: "Max 5x/Month", risingStar: "Max 5x/Month", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "💾 Database Computation",
+      addOn: getAddOnText(),
+      features: [
+        { name: "Database Users", startup: "100K monthly active users", risingStar: "100K monthly active users", enterprise: "Custom" },
+        { name: "Database Size", startup: "8 GB disk", risingStar: "8 GB disk", enterprise: "Custom" },
+        { name: "Bandwidth", startup: "250 GB", risingStar: "250 GB", enterprise: "Custom" },
+        { name: "File Storage", startup: "100 GB", risingStar: "100 GB", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "👥 Dashboard Access",
+      features: [
+        { name: "Team Members", startup: "10", risingStar: "25", enterprise: "Custom" },
+        { name: "Backend Access", startup: "Flowscape Dashboard + Database", risingStar: "Flowscape Dashboard + Database", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "🔗 API & Advanced",
+      features: [
+        { name: "Custom API Integration", startup: "10", risingStar: "20", enterprise: "Custom" },
+        { name: "Custom Transaction Email", startup: true, risingStar: true, enterprise: true },
+        { name: "ISO", startup: "On Demand", risingStar: "On Demand", enterprise: "Custom" },
+        { name: "Marketing", startup: "On Demand", risingStar: "On Demand", enterprise: "Custom" }
+      ]
+    }
+  ] : [
+    {
+      name: "📄 Pages & Content",
+      features: [
+        { name: "Pages", lite: "Interactive Blog + 1 Page", plus: "4 Pages + 1 Bonus", pro: "10+ Pages + 1 Bonus" },
+        { name: "Storage", lite: "500MB", plus: "1GB", pro: "1GB" },
+        { name: "Monetization", lite: false, plus: "Google Adsense", pro: "Google Adsense" },
+        { name: "SEO", lite: true, plus: true, pro: true }
+      ]
+    },
+    {
+      name: "⏰ Delivery & Support",
+      features: [
+        { name: "Standard Delivery", lite: "3-7 Days", plus: "3-7 Days", pro: "6-12 Days" },
+        { name: "Express Delivery", lite: "2-3 Days", plus: "2-3 Days", pro: "3-7 Days" },
+        { name: "Support", lite: "24/7 Included", plus: "24/7 Included", pro: "24/7 Included" },
+        { name: "Monthly Edits", lite: "Max 5x", plus: "Max 5x", pro: "Max 8x" }
+      ]
+    },
+    {
+      name: "🌐 Domain & Integration",
+      features: [
+        { name: "Custom Domain", lite: getDomainPricing(), plus: "Included", pro: "Included" },
+        { name: "BYO Domain", lite: true, plus: true, pro: true },
+        { name: "Social Media Integration", lite: true, plus: true, pro: true },
+        { name: "Custom API Integration", lite: false, plus: "Up to 5x", pro: "Up to 5x" }
+      ]
+    },
+    {
+      name: "💾 Database & Team",
+      addOn: getAddOnText(),
+      features: [
+        { name: "Database Users", lite: "50K monthly", plus: "100K monthly", pro: "100K monthly" },
+        { name: "Database Size", lite: "500MB", plus: "8GB", pro: "8GB" },
+        { name: "File Storage", lite: "1GB", plus: "100GB", pro: "100GB" },
+        { name: "Bandwidth", lite: "5GB", plus: "250GB", pro: "250GB" },
+        { name: "Team Members", lite: "1", plus: "2", pro: "3" },
+        { name: "Backend Access", lite: "Flowscape Dashboard", plus: "Flowscape Dashboard", pro: "Flowscape + Database Access" }
+      ]
+    },
+    {
+      name: "✨ Features",
+      features: [
+        { name: "Interactive Design", lite: true, plus: true, pro: true },
+        { name: "Custom Code Option", lite: true, plus: true, pro: true },
+        { name: "30-day Analytics", lite: true, plus: true, pro: true },
+        { name: "Cookie Banner", lite: true, plus: true, pro: true }
+      ]
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+    <div ref={setPricingSectionRef} className="max-w-5xl mx-auto mb-16">
+      {/* Desktop View - Original Grid */}
+      <div className="hidden md:grid grid-cols-3 gap-6">
       {plans.map((plan, index) => (
         <motion.div
           key={plan.name}
@@ -1708,6 +1979,19 @@ const PricingCards = () => {
 
           {/* Features */}
           <ul className="space-y-3 mb-6">
+              {/* Everything in [Plan] + indicator */}
+              {plan.includesEverythingFrom && (
+                <li className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                    <svg className="w-2.5 h-2.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-blue-300 text-sm font-medium">Everything in {plan.includesEverythingFrom} +</span>
+                </li>
+              )}
+              
+              {/* Individual features */}
             {plan.features.map((feature, idx) => (
               <li key={idx} className="flex items-start gap-3">
                 <div className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
@@ -1734,48 +2018,274 @@ const PricingCards = () => {
           </motion.button>
         </motion.div>
       ))}
+      </div>
+
+      {/* Mobile View - Screenshot Style */}
+      <div className="md:hidden">
+        {/* Mobile Sticky Header */}
+        <motion.div
+          className={`sticky top-0 z-20 bg-black backdrop-blur-md transition-all duration-300 ${
+            isScrolling ? 'py-2' : 'py-4'
+          }`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="flex items-center justify-between px-4 mb-3">
+            <div className="text-sm text-gray-400 font-medium">
+              {selectedPlan === 'business' ? 'Business plans' : 'Personal plans'}
+            </div>
+            <div className="text-xs text-gray-500 uppercase tracking-wider">
+              Billed Monthly
+            </div>
+          </div>
+          
+          {/* Plan Price Cards */}
+          <div className="grid grid-cols-3 gap-3 px-4">
+            {plans.map((plan, index) => (
+              <motion.div
+                key={plan.name}
+                className={`text-center rounded-lg border transition-all duration-300 ${
+                  index === 1 // Middle plan (popular)
+                    ? 'bg-purple-600 border-purple-500' 
+                    : 'bg-gray-800 border-gray-700'
+                }`}
+                animate={{
+                  padding: isScrolling ? '8px' : '12px'
+                }}
+              >
+                <div className={`font-semibold ${index === 1 ? 'text-white' : 'text-gray-300'}`}>
+                  {plan.name}
+                </div>
+                <div className={`text-lg font-bold text-white mt-1`}>
+                  {plan.price}
+                </div>
+                {!isScrolling && (
+                  <motion.button
+                    className={`w-full py-2 rounded-md text-xs font-medium mt-2 transition-colors ${
+                      index === 1
+                        ? 'bg-white text-purple-600 hover:bg-gray-100'
+                        : index === 0
+                          ? 'bg-purple-600 text-white hover:bg-purple-700'
+                          : 'bg-gray-600 text-white hover:bg-gray-500'
+                    }`}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {index === 2 ? 'Explore' : 'Get'}
+                  </motion.button>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Mobile Feature List - Comprehensive Features */}
+        <div className="px-4 pt-6 space-y-6 pb-32">
+          {featureCategories.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="space-y-4">
+              <h3 className="text-white font-semibold flex items-center gap-2">
+                {category.name}
+              </h3>
+              
+              {/* Add-on information for Database sections */}
+              {category.addOn && (
+                <div className="mb-4">
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2 text-center">
+                    <span className="text-blue-400 text-xs font-medium">{category.addOn}</span>
+                  </div>
+                </div>
+              )}
+              
+              {category.features.map((feature, featureIndex) => (
+                <div key={featureIndex} className="space-y-3">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-gray-300 text-sm">{feature.name}</span>
+                    <div className="w-4 h-4 text-gray-500">
+                      <svg fill="currentColor" viewBox="0 0 20 20" className="w-4 h-4">
+                        <circle cx="10" cy="10" r="2"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    {[0, 1, 2].map((planIndex) => {
+                      const value = selectedPlan === 'business' 
+                        ? (feature as any)[['startup', 'risingStar', 'enterprise'][planIndex]]
+                        : (feature as any)[['lite', 'plus', 'pro'][planIndex]];
+                      
+                      return (
+                        <div key={planIndex} className="py-2">
+                          <div className="flex items-center justify-center">
+                            {typeof value === 'boolean' ? (
+                              value ? (
+                                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              ) : (
+                                <span className="text-gray-600 text-sm">—</span>
+                              )
+                            ) : (
+                              <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <div className="text-xs text-white mt-1">
+                            {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
 const FeatureTable = () => {
-  const featureCategories = [
+  const { selectedCountry } = useContext(CountryContext);
+  const { selectedPlan } = useContext(PlanContext);
+  
+  const getDomainPricing = () => {
+    if (selectedCountry === 'Bangladesh') {
+      return "+৳1200 (1 Year)";
+    }
+    return "+A$20 (1 Year)";
+  };
+
+  const getAddOnText = () => {
+    if (selectedCountry === 'Bangladesh') {
+      return "Add on available ৳3500 For Increased limits";
+    }
+    return "Add on available A$30 For Increased limits";
+  };
+
+  const featureCategories = selectedPlan === 'business' ? [
     {
-      name: "📄 Publish",
+      name: "📄 Pages & Content",
       features: [
-        { name: "Home + 404 page", mini: true, basic: "1000 pages", pro: "10,000 pages" },
-        { name: "Page & CMS drafts", mini: false, basic: "Page & CMS drafts", pro: "Page & CMS drafts" },
-        { name: "CMS collections", mini: false, basic: "2 CMS collections", pro: "10 CMS collections" }
+        { name: "Pages", startup: "4 Pages + Ecommerce", risingStar: "10 Pages + 1 bonus + Ecommerce", enterprise: "Custom" },
+        { name: "Storage", startup: "2 GB", risingStar: "5GB", enterprise: "Custom" }
       ]
     },
     {
-      name: "🤝 Collaboration",
+      name: "💳 Payment Gateway",
       features: [
-        { name: "3 editors max", mini: "A$27 per editor", basic: "3 editors max", pro: "3 editors max" },
-        { name: "3 day version history", mini: "A$27 per editor", basic: "7 day version history", pro: "30 day version history" }
+        { name: "Payment Gateway", startup: selectedCountry === 'Bangladesh' ? "Stripe + Paypal + (Bkash + Nagad + SSL Commerce for Bangladesh)" : "Stripe + Paypal + Bkash + Nagad + SSL Commerce for Bangladesh", risingStar: "Stripe + Paypal + Bkash + Nagad + SSL Commerce for Bangladesh", enterprise: "Custom" },
+        { name: "Split Payment", startup: false, risingStar: true, enterprise: true },
+        { name: "BNPL", startup: false, risingStar: true, enterprise: true }
       ]
     },
     {
-      name: "🤖 AI",
+      name: "📈 Monetization & SEO",
       features: [
-        { name: "Wireframer unlimited", mini: false, basic: "Wireframer unlimited", pro: "Wireframer unlimited" },
-        { name: "Workshop limited", mini: false, basic: "Workshop limited", pro: "Workshop unlimited" }
+        { name: "Monetization", startup: "Yes (Google Adsense)", risingStar: "Yes (Google Adsense)", enterprise: "Yes (Google Adsense)" },
+        { name: "SEO", startup: "Optimized", risingStar: "Optimized", enterprise: "Optimized" }
       ]
     },
     {
-      name: "🌐 Hosting",
+      name: "⏰ Delivery Time",
       features: [
-        { name: "500MB storage", mini: true, basic: "1GB storage", pro: "10GB storage" },
-        { name: "10GB bandwidth", mini: true, basic: "50GB bandwidth", pro: "100GB bandwidth" },
-        { name: "50MB file uploads", mini: true, basic: "50MB file uploads", pro: "50MB file uploads" },
-        { name: "50 form entries", mini: true, basic: "500 form entries", pro: "2,500 form entries" },
-        { name: "Staging environment", mini: false, basic: false, pro: "Staging environment" }
+        { name: "Standard Delivery", startup: "6-12 Days", risingStar: "10-14 Days", enterprise: "Custom" },
+        { name: "Express Delivery", startup: "5-7 Days", risingStar: "6-12 Days", enterprise: "Custom" }
       ]
     },
     {
       name: "✨ Features",
       features: [
-        { name: "Custom code", mini: true, basic: "Custom code", pro: "Custom code" }
+        { name: "Design & Code", startup: "Interactive Design, Style of your choice, Custom code Option", risingStar: "Interactive Design, Style of your choice, Custom code Option", enterprise: "Custom" },
+        { name: "Analytics & Tools", startup: "30-day analytics, Popup, Cookie banner", risingStar: "30-day analytics, Popup, Cookie banner", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "🌐 Domain & Integration",
+      features: [
+        { name: "Custom Domain", startup: "Included", risingStar: "Included", enterprise: "Included" },
+        { name: "BYO Domain", startup: true, risingStar: true, enterprise: true },
+        { name: "Social Media Integration", startup: true, risingStar: true, enterprise: true }
+      ]
+    },
+    {
+      name: "🛠️ Support & Edits",
+      features: [
+        { name: "Support", startup: "24/7 Included", risingStar: "24/7 Included", enterprise: "24/7 Included" },
+        { name: "Edits", startup: "Max of 5x Month Post delivery", risingStar: "Max of 5x Month Post delivery", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "💾 Database Computation",
+      addOn: getAddOnText(),
+      features: [
+        { name: "Database Info", startup: "Included + Add on for 100,000 monthly active users, 8 GB disk size per project, 250 GB bandwidth, 100 GB file storage", risingStar: "Included + Add on for 100,000 monthly active users, 8 GB disk size per project, 250 GB bandwidth, 100 GB file storage", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "👥 Dashboard Access",
+      features: [
+        { name: "Dashboard Access", startup: "10 Team Members", risingStar: "25 Team Members", enterprise: "Custom" },
+        { name: "Backend Access & Management", startup: "Flowscape Dashboard + Database Access", risingStar: "Flowscape Dashboard + Database Access", enterprise: "Custom" }
+      ]
+    },
+    {
+      name: "🔗 API & Advanced",
+      features: [
+        { name: "Custom API Integration", startup: "10", risingStar: "20", enterprise: "Custom" },
+        { name: "Custom Transaction Email", startup: true, risingStar: true, enterprise: true },
+        { name: "ISO", startup: "On Demand*", risingStar: "On Demand*", enterprise: "Custom" },
+        { name: "Marketing", startup: "On Demand*", risingStar: "On Demand*", enterprise: "Custom" }
+      ]
+    }
+  ] : [
+    {
+      name: "📄 Pages & Content",
+      features: [
+        { name: "Pages", lite: "Interactive Blog + 1 Page", plus: "4 Pages + 1 Bonus", pro: "10+ Pages + 1 Bonus" },
+        { name: "Storage", lite: "500MB", plus: "1GB", pro: "1GB" },
+        { name: "Monetization", lite: false, plus: "Google Adsense", pro: "Google Adsense" },
+        { name: "SEO", lite: true, plus: true, pro: true }
+      ]
+    },
+    {
+      name: "⏰ Delivery & Support",
+      features: [
+        { name: "Standard Delivery", lite: "3-7 Days", plus: "3-7 Days", pro: "6-12 Days" },
+        { name: "Express Delivery", lite: "2-3 Days", plus: "2-3 Days", pro: "3-7 Days" },
+        { name: "Support", lite: "24/7 Included", plus: "24/7 Included", pro: "24/7 Included" },
+        { name: "Monthly Edits", lite: "Max 5x", plus: "Max 5x", pro: "Max 8x" }
+      ]
+    },
+    {
+      name: "🌐 Domain & Integration",
+      features: [
+        { name: "Custom Domain", lite: getDomainPricing(), plus: "Included", pro: "Included" },
+        { name: "BYO Domain", lite: true, plus: true, pro: true },
+        { name: "Social Media Integration", lite: true, plus: true, pro: true },
+        { name: "Custom API Integration", lite: false, plus: "Up to 5x", pro: "Up to 5x" }
+      ]
+    },
+    {
+      name: "💾 Database & Team",
+      addOn: getAddOnText(),
+      features: [
+        { name: "Database Users", lite: "50,000 monthly", plus: "100,000 monthly", pro: "100,000 monthly" },
+        { name: "Database Size", lite: "500MB", plus: "8GB", pro: "8GB" },
+        { name: "File Storage", lite: "1GB", plus: "100GB", pro: "100GB" },
+        { name: "Bandwidth", lite: "5GB", plus: "250GB", pro: "250GB" },
+        { name: "Dashboard Access", lite: "1 User", plus: "2 Team Members", pro: "3 Team Members" },
+        { name: "Backend Management", lite: "Flowscape Dashboard", plus: "Flowscape Dashboard", pro: "Flowscape Dashboard + Database Access" }
+      ]
+    },
+    {
+      name: "✨ Features",
+      features: [
+        { name: "Interactive Design", lite: true, plus: true, pro: true },
+        { name: "Custom Code Option", lite: true, plus: true, pro: true },
+        { name: "30-day Analytics", lite: true, plus: true, pro: true },
+        { name: "Cookie Banner", lite: true, plus: true, pro: true }
       ]
     }
   ];
@@ -1792,13 +2302,13 @@ const FeatureTable = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 px-6">
         <div></div>
         <div className="text-center">
-          <h4 className="text-white font-semibold">Mini</h4>
+          <h4 className="text-white font-semibold">{selectedPlan === 'business' ? 'Startup' : 'Lite'}</h4>
         </div>
         <div className="text-center">
-          <h4 className="text-white font-semibold">Basic</h4>
+          <h4 className="text-white font-semibold">{selectedPlan === 'business' ? 'Rising Star' : 'Plus'}</h4>
         </div>
         <div className="text-center">
-          <h4 className="text-white font-semibold">Pro</h4>
+          <h4 className="text-white font-semibold">{selectedPlan === 'business' ? 'Enterprise' : 'Pro'}</h4>
         </div>
       </div>
 
@@ -1815,6 +2325,28 @@ const FeatureTable = () => {
             {category.name}
           </h3>
           
+          {/* Add-on information for Database & Team section */}
+          {category.name === "💾 Database & Team" && category.addOn && (
+            <div className="mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div></div>
+                <div className="text-center">
+                  <span className="text-gray-600 text-xs">—</span>
+                </div>
+                <div className="text-center">
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2">
+                    <span className="text-blue-400 text-xs font-medium">{category.addOn}</span>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2">
+                    <span className="text-blue-400 text-xs font-medium">{category.addOn}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="space-y-4">
             {category.features.map((feature, featureIndex) => (
               <motion.div
@@ -1829,10 +2361,12 @@ const FeatureTable = () => {
                   {feature.name}
                 </div>
                 
-                {/* Mini Column */}
+                {/* First Column */}
                 <div className="text-center">
-                  {typeof feature.mini === 'boolean' ? (
-                    feature.mini ? (
+                  {(() => {
+                    const value = selectedPlan === 'business' ? (feature as any).startup : (feature as any).lite;
+                    return typeof value === 'boolean' ? (
+                      value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
                         <svg className="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -1842,14 +2376,17 @@ const FeatureTable = () => {
                       <span className="text-gray-600 text-sm">—</span>
                     )
                   ) : (
-                    <span className="text-gray-300 text-sm">{feature.mini}</span>
-                  )}
+                      <span className="text-gray-300 text-sm">{value}</span>
+                    );
+                  })()}
                 </div>
                 
-                {/* Basic Column */}
+                {/* Second Column */}
                 <div className="text-center">
-                  {typeof feature.basic === 'boolean' ? (
-                    feature.basic ? (
+                  {(() => {
+                    const value = selectedPlan === 'business' ? (feature as any).risingStar : (feature as any).plus;
+                    return typeof value === 'boolean' ? (
+                      value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
                         <svg className="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -1859,14 +2396,17 @@ const FeatureTable = () => {
                       <span className="text-gray-600 text-sm">—</span>
                     )
                   ) : (
-                    <span className="text-gray-300 text-sm">{feature.basic}</span>
-                  )}
+                      <span className="text-gray-300 text-sm">{value}</span>
+                    );
+                  })()}
                 </div>
                 
-                {/* Pro Column */}
+                {/* Third Column */}
                 <div className="text-center">
-                  {typeof feature.pro === 'boolean' ? (
-                    feature.pro ? (
+                  {(() => {
+                    const value = selectedPlan === 'business' ? (feature as any).enterprise : (feature as any).pro;
+                    return typeof value === 'boolean' ? (
+                      value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
                         <svg className="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -1876,8 +2416,9 @@ const FeatureTable = () => {
                       <span className="text-gray-600 text-sm">—</span>
                     )
                   ) : (
-                    <span className="text-gray-300 text-sm">{feature.pro}</span>
-                  )}
+                      <span className="text-gray-300 text-sm">{value}</span>
+                    );
+                  })()}
                 </div>
               </motion.div>
             ))}

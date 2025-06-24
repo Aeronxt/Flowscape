@@ -8,26 +8,26 @@ interface Position {
   y: number;
 }
 
-// Hook to detect if device is mobile
-const useIsMobile = () => {
+// Hook to detect mobile viewport
+const useIsMobileViewport = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkIsMobile = () => {
-      // Check for touch capability and screen width
-      const hasTouchCapability = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth <= 768;
-      setIsMobile(hasTouchCapability || isSmallScreen);
+    const checkViewport = () => {
+      // Only check viewport width for mobile detection
+      setIsMobile(window.innerWidth <= 768);
     };
 
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
+    checkViewport();
+    window.addEventListener('resize', checkViewport);
     
-    return () => window.removeEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkViewport);
   }, []);
 
   return isMobile;
 };
+
+
 
 export interface SmoothCursorProps {
   cursor?: JSX.Element;
@@ -62,7 +62,7 @@ export function SmoothCursor({
     restDelta: 0.001,
   },
 }: SmoothCursorProps) {
-  const isMobile = useIsMobile();
+  const isMobileViewport = useIsMobileViewport();
   const [isMoving, setIsMoving] = useState(false);
   const lastMousePos = useRef<Position>({ x: 0, y: 0 });
   const velocity = useRef<Position>({ x: 0, y: 0 });
@@ -84,10 +84,6 @@ export function SmoothCursor({
   });
 
   useEffect(() => {
-    // Don't set up mouse events on mobile devices
-    if (isMobile) {
-      return;
-    }
     const updateVelocity = (currentPos: Position) => {
       const currentTime = Date.now();
       const deltaTime = currentTime - lastUpdateTime.current;
@@ -156,10 +152,10 @@ export function SmoothCursor({
       document.body.style.cursor = "auto";
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [cursorX, cursorY, rotation, scale, isMobile]);
+  }, [cursorX, cursorY, rotation, scale]);
 
-  // Don't render cursor on mobile devices
-  if (isMobile) {
+  // Hide cursor on mobile viewports
+  if (isMobileViewport) {
     return null;
   }
 
