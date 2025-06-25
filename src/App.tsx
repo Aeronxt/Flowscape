@@ -160,7 +160,7 @@ function App() {
                   Sign In
                 </motion.button>
                 <ShimmerButton
-                  onClick={() => handleAuthClick('signup')}
+                  onClick={() => window.open('https://dashboard.flowscape.xyz/', '_blank')}
                   className="text-white font-medium"
                   background="rgba(147, 51, 234, 1)"
                   shimmerColor="#ffffff"
@@ -329,7 +329,7 @@ function App() {
                 <motion.button
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
                   onClick={() => {
-                    handleAuthClick('signup');
+                    window.open('https://dashboard.flowscape.xyz/', '_blank');
                     setIsMobileMenuOpen(false);
                   }}
                   initial={{ opacity: 0, y: 20 }}
@@ -1346,6 +1346,7 @@ function App() {
             viewport={{ once: true }}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => window.open('https://dashboard.flowscape.xyz/', '_blank')}
           >
             Get Started
           </motion.button>
@@ -2013,6 +2014,11 @@ const PricingCards = () => {
             }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              if (plan.cta === 'Get started') {
+                window.open('https://dashboard.flowscape.xyz/', '_blank');
+              }
+            }}
           >
             {plan.cta}
           </motion.button>
@@ -2069,6 +2075,11 @@ const PricingCards = () => {
                           : 'bg-gray-600 text-white hover:bg-gray-500'
                     }`}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      if (index !== 2) { // Not the "Explore" button
+                        window.open('https://dashboard.flowscape.xyz/', '_blank');
+                      }
+                    }}
                   >
                     {index === 2 ? 'Explore' : 'Get'}
                   </motion.button>
