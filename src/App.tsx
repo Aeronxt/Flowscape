@@ -130,7 +130,7 @@ function App() {
             whileHover={{ scale: 1.05 }}
           >
             <img 
-              src="https://wrczctvglyhprlbkogjb.supabase.co/storage/v1/object/public/banklogos//flowscape%20logo%20(1).png" 
+              src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/public//f.png" 
               alt="Flowscape Logo" 
               className="h-6 md:h-8 object-contain opacity-95"
             />
@@ -1368,7 +1368,7 @@ function App() {
             >
               <div className="mb-6">
                 <img 
-                  src="https://wrczctvglyhprlbkogjb.supabase.co/storage/v1/object/public/banklogos//flowscape%20logo%20(1).png" 
+                  src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/public//f.png" 
                   alt="Flowscape Logo" 
                   className="w-32 h-auto"
                 />
