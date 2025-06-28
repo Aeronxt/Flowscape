@@ -7,8 +7,45 @@ import { SmoothCursor } from './components/ui/smooth-cursor';
 import { UserMenu } from './components/UserMenu';
 import { ShimmerButton } from './components/magicui/shimmer-button';
 import { InteractiveGridPattern } from './components/ui/interactive-grid-pattern';
-import { ApiIntegrationDemo } from './components/ui/api-integration-demo';
 import { Globe } from './components/magicui/globe';
+import { Footer } from './components/Footer';
+import { Squares } from './components/ui/squares';
+import { LogoCarousel } from './components/ui/logo-carousel';
+import { FeaturesSectionWithHoverEffects } from './components/ui/features-section-hover';
+
+// Logo data for the carousel
+const logoData = [
+  {
+    id: 1,
+    name: 'bKash',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//BKash_Logo_icon-700x662.png'
+  },
+  {
+    id: 2,
+    name: 'Stripe',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//link_stripe-logo_brandlogos.net_scfln.png'
+  },
+  {
+    id: 3,
+    name: 'Company Logo',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//logo.png'
+  },
+  {
+    id: 4,
+    name: 'PayPal',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Paypal_2014_logo.png'
+  },
+  {
+    id: 5,
+    name: 'Stripe Alternative',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Stripe_Logo,_revised_2016.svg.png'
+  },
+  {
+    id: 6,
+    name: 'Nagad',
+    img: 'https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//vectorseek.com-Nagad-Logo-Vector.png'
+  }
+];
 
 // Country Context
 const CountryContext = createContext<{
@@ -358,14 +395,18 @@ function App() {
 
       {/* Hero Section */}
       <section id="home" className="relative min-h-screen flex items-center justify-center px-4 md:px-6 pt-16 md:pt-12">
-        {/* Interactive Grid Background */}
-        <InteractiveGridPattern
-          width={50}
-          height={50}
-          squares={[30, 20]}
-          className="opacity-20"
-          squaresClassName="stroke-gray-600/20 hover:fill-purple-500/20"
+        {/* Animated Squares Background */}
+        <div className="absolute inset-0">
+          <Squares
+            direction="diagonal"
+            speed={0.5}
+            borderColor="#333"
+            squareSize={50}
+            hoverFillColor="#222"
+            className="opacity-30"
         />
+        </div>
+        
         
         {/* Background Orb Effect */}
         <div className="absolute inset-0 overflow-hidden">
@@ -373,84 +414,8 @@ function App() {
             <div className="w-[1000px] h-[600px] rounded-full bg-gradient-to-t from-purple-600/40 via-green-600/30 to-transparent blur-3xl"></div>
           </div>
           {/* Company logos in the orb */}
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-full max-w-4xl overflow-hidden">
-            <motion.div 
-              className="flex items-center gap-6 md:gap-8"
-              animate={{ x: [0, -700] }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 40,
-                  ease: "linear",
-                },
-              }}
-              style={{ width: 'calc(200%)' }}
-            >
-              {/* First set of logos */}
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//BKash_Logo_icon-700x662.png" 
-                alt="bKash" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//link_stripe-logo_brandlogos.net_scfln.png" 
-                alt="Stripe" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//logo.png" 
-                alt="Company Logo" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Paypal_2014_logo.png" 
-                alt="PayPal" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Stripe_Logo,_revised_2016.svg.png" 
-                alt="Stripe" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//vectorseek.com-Nagad-Logo-Vector.png" 
-                alt="Nagad" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              
-              {/* Duplicate set for seamless loop */}
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//BKash_Logo_icon-700x662.png" 
-                alt="bKash" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//link_stripe-logo_brandlogos.net_scfln.png" 
-                alt="Stripe" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//logo.png" 
-                alt="Company Logo" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Paypal_2014_logo.png" 
-                alt="PayPal" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Stripe_Logo,_revised_2016.svg.png" 
-                alt="Stripe" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-              <img 
-                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//vectorseek.com-Nagad-Logo-Vector.png" 
-                alt="Nagad" 
-                className="h-6 md:h-8 object-contain filter grayscale hover:grayscale-0 transition-all duration-300 flex-shrink-0"
-              />
-            </motion.div>
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-full max-w-4xl flex justify-center">
+            <LogoCarousel logos={logoData} columnCount={3} />
           </div>
         </div>
 
@@ -717,224 +682,8 @@ function App() {
             </motion.p>
           </motion.div>
 
-          {/* Main Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mb-12 md:mb-16">
-            {/* Seamless API Integrations */}
-            <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              viewport={{ once: true }}
-            >
-              {/* Icon */}
-              <motion.div
-                className="w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300"
-                whileHover={{ rotate: 5 }}
-              >
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </motion.div>
-              
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 group-hover:text-purple-300 transition-colors">
-                Seamless API Integrations
-              </h3>
-              <p className="text-base md:text-lg text-gray-400 mb-6 md:mb-8 leading-relaxed">
-                Connect with any API or service of your choice. Our platform is currently ready to be shipped with robust integration capabilities.
-              </p>
-              
-              {/* Interactive AnimatedBeam visualization */}
-              <div className="relative h-60 bg-gray-800/30 rounded-xl overflow-hidden group-hover:bg-gray-800/50 transition-colors">
-                <ApiIntegrationDemo />
-              </div>
-            </motion.div>
-
-            {/* Trusted Authentication */}
-            <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              viewport={{ once: true }}
-            >
-              {/* Icon */}
-              <motion.div
-                className="w-20 h-20 bg-gradient-to-br from-green-600 to-teal-600 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300"
-                whileHover={{ rotate: -5 }}
-              >
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </motion.div>
-              
-              <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-green-300 transition-colors">
-                Trusted Authentication
-              </h3>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                Keep yourself and your customers safe with our robust authentication methods. Supporting B2B, B2C, and personal systems.
-              </p>
-              
-              {/* Interactive security visualization */}
-              <div className="relative h-60 bg-gray-800/30 rounded-xl overflow-hidden group-hover:bg-gray-800/50 transition-colors">
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ opacity: 0.6 }}
-                  whileHover={{ opacity: 1 }}
-                >
-                  <motion.div
-                    className="w-24 h-24 border-4 border-green-500/50 rounded-full flex items-center justify-center"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  >
-                    <motion.div
-                      className="w-10 h-10 bg-green-500 rounded-full"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  </motion.div>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Premium UI/UX Design */}
-            <motion.div
-              className="group relative bg-gray-900/40 border border-gray-800/50 rounded-3xl p-6 md:p-10 backdrop-blur-sm hover:bg-gray-900/60 transition-all duration-500"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              viewport={{ once: true }}
-            >
-              {/* Icon */}
-              <motion.div
-                className="w-20 h-20 bg-gradient-to-br from-pink-600 to-orange-600 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300"
-                whileHover={{ rotate: 5 }}
-              >
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
-                </svg>
-              </motion.div>
-              
-              <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-pink-300 transition-colors">
-                Premium UI/UX Design
-              </h3>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                Excellent seamless fluid UI/UX designs that enhance user experience and drive engagement across all platforms.
-              </p>
-              
-              {/* Interactive design visualization */}
-              <div className="relative h-60 bg-gray-800/30 rounded-xl overflow-hidden group-hover:bg-gray-800/50 transition-colors">
-                <motion.div className="absolute inset-0 p-6">
-                  {[...Array(4)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="h-5 bg-gradient-to-r from-pink-500/50 to-orange-500/50 rounded-full mb-3"
-                      style={{ width: `${60 + i * 20}%` }}
-                      animate={{ 
-                        opacity: [0.5, 1, 0.5],
-                        scaleX: [0.8, 1, 0.8]
-                      }}
-                      transition={{ 
-                        duration: 3,
-                        delay: i * 0.4,
-                        repeat: Infinity
-                      }}
-                    />
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Bottom Features Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Ready to Ship */}
-            <motion.div
-              className="group text-center p-6 bg-gray-900/30 border border-gray-800/30 rounded-2xl backdrop-blur-sm hover:bg-gray-900/50 transition-all duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              whileHover={{ scale: 1.05 }}
-              viewport={{ once: true }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-blue-600/80 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition-colors"
-                whileHover={{ rotate: 10 }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </motion.div>
-              <h4 className="text-lg font-bold text-white mb-2">Ready to Ship</h4>
-              <p className="text-sm text-gray-400">Currently ready to be deployed with all integrations tested.</p>
-            </motion.div>
-
-            {/* B2B & B2C Solutions */}
-            <motion.div
-              className="group text-center p-6 bg-gray-900/30 border border-gray-800/30 rounded-2xl backdrop-blur-sm hover:bg-gray-900/50 transition-all duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              viewport={{ once: true }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-purple-600/80 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-600 transition-colors"
-                whileHover={{ rotate: -10 }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </motion.div>
-              <h4 className="text-lg font-bold text-white mb-2">B2B & B2C Solutions</h4>
-              <p className="text-sm text-gray-400">Comprehensive solutions for business and personal systems.</p>
-            </motion.div>
-
-            {/* Lifetime Support */}
-            <motion.div
-              className="group text-center p-6 bg-gray-900/30 border border-gray-800/30 rounded-2xl backdrop-blur-sm hover:bg-gray-900/50 transition-all duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              whileHover={{ scale: 1.05 }}
-              viewport={{ once: true }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-green-600/80 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-600 transition-colors"
-                whileHover={{ rotate: 10 }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
-                </svg>
-              </motion.div>
-              <h4 className="text-lg font-bold text-white mb-2">Lifetime Support</h4>
-              <p className="text-sm text-gray-400">Ongoing support and development for your peace of mind.</p>
-            </motion.div>
-
-            {/* Development Excellence */}
-            <motion.div
-              className="group text-center p-6 bg-gray-900/30 border border-gray-800/30 rounded-2xl backdrop-blur-sm hover:bg-gray-900/50 transition-all duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
-              whileHover={{ scale: 1.05 }}
-              viewport={{ once: true }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-orange-600/80 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-600 transition-colors"
-                whileHover={{ rotate: -10 }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </motion.div>
-              <h4 className="text-lg font-bold text-white mb-2">Expert Development</h4>
-              <p className="text-sm text-gray-400">Professional development with modern technologies and best practices.</p>
-            </motion.div>
-          </div>
+          {/* Features Section with Hover Effects */}
+          <FeaturesSectionWithHoverEffects />
         </div>
       </section>
 
@@ -1354,94 +1103,7 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-gray-800/50 py-16 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          {/* Main Footer Content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
-            {/* Brand Section */}
-            <motion.div
-              className="lg:col-span-1"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="mb-6">
-                <img 
-                  src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/public//f.png" 
-                  alt="Flowscape Logo" 
-                  className="w-32 h-auto"
-                />
-              </div>
-            </motion.div>
-
-            {/* View */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-white font-semibold text-lg mb-6">View</h3>
-              <ul className="space-y-4">
-                {['Home', 'About', 'Pricing', 'Contact'].map((item) => (
-                  <motion.li key={item} whileHover={{ x: 5 }}>
-                    <a href={`#${item.toLowerCase()}`} className="text-gray-400 hover:text-white transition-colors" onClick={(e) => { e.preventDefault(); document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' }); }}>
-                      {item}
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Social */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-white font-semibold text-lg mb-6">Social</h3>
-              <ul className="space-y-4">
-                {[
-                  { name: 'Twitter (X)', url: '#' },
-                  { name: 'Instagram', url: '#' },
-                  { name: 'Youtube', url: '#' }
-                ].map((item) => (
-                  <motion.li key={item.name} whileHover={{ x: 5 }}>
-                    <a href={item.url} className="text-gray-400 hover:text-white transition-colors">
-                      {item.name}
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
-
-          {/* Bottom Section */}
-          <motion.div
-            className="pt-8 border-t border-gray-800/50"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-gray-500 text-sm">
-                © 2025 Aeron X Technologies. All rights reserved.
-              </p>
-              <div className="flex items-center gap-6">
-                <a href="#privacy" className="text-gray-500 hover:text-white text-sm transition-colors">
-                  Privacy Policy
-                </a>
-                <a href="#terms" className="text-gray-500 hover:text-white text-sm transition-colors">
-                  Terms of Service
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Auth Modal */}
       <AuthModal
