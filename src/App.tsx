@@ -12,6 +12,29 @@ import { Footer } from './components/Footer';
 import { Squares } from './components/ui/squares';
 import { LogoCarousel } from './components/ui/logo-carousel';
 import { FeaturesSectionWithHoverEffects } from './components/ui/features-section-hover';
+import { UIUXDesignFeature } from './components/ui/uiux-design-feature';
+import ScrollFloat from './components/ui/ScrollFloat';
+import ScrollReveal from './components/ui/ScrollReveal';
+import { FeatureSteps } from './components/ui/feature-steps';
+import { IconCloud } from './components/ui/icon-cloud';
+import TestimonialsSection from './components/ui/testimonials';
+import CardSwap, { Card } from './components/ui/CardSwap';
+import { GlareCard } from './components/ui/glare-card';
+
+// Type definitions
+type FeatureValue = string | boolean | number;
+type BusinessFeature = {
+  name: string;
+  startup: FeatureValue;
+  risingStar: FeatureValue;
+  enterprise: FeatureValue;
+};
+type PersonalFeature = {
+  name: string;
+  lite: FeatureValue;
+  plus: FeatureValue;
+  pro: FeatureValue;
+};
 
 // Logo data for the carousel
 const logoData = [
@@ -483,6 +506,93 @@ function App() {
         </div>
       </section>
 
+      {/* View our Work Section */}
+      <section className="relative py-16 md:py-32 px-4 md:px-6 overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/50 to-black"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto">
+          {/* Section Title */}
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+              View our Work
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+              Explore our portfolio of stunning web applications and digital experiences crafted for businesses worldwide.
+            </p>
+          </motion.div>
+
+          {/* GlareCards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <GlareCard>
+                <div className="p-6 h-full flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">E-Commerce Platform</h3>
+                    <p className="text-gray-400 text-sm">Modern online store with seamless payment integration and inventory management.</p>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-purple-400 text-xs font-medium">React • Node.js • Stripe</span>
+                  </div>
+                </div>
+              </GlareCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <GlareCard>
+                <div className="p-6 h-full flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">SaaS Dashboard</h3>
+                    <p className="text-gray-400 text-sm">Comprehensive analytics dashboard with real-time data visualization and reporting.</p>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-purple-400 text-xs font-medium">Next.js • PostgreSQL • Charts</span>
+                  </div>
+                </div>
+              </GlareCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <GlareCard>
+                <div className="p-6 h-full flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">Mobile App</h3>
+                    <p className="text-gray-400 text-sm">Cross-platform mobile application with native performance and smooth animations.</p>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-purple-400 text-xs font-medium">React Native • Firebase</span>
+                  </div>
+                </div>
+              </GlareCard>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Bottom blur effect */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none"></div>
+      </section>
+
       {/* About Us Section */}
       <section id="about" className="relative py-16 md:py-32 px-4 md:px-6 overflow-hidden">
         {/* Background gradient */}
@@ -502,42 +612,37 @@ function App() {
             </AnimatedShinyText>
           </motion.div>
 
-          <motion.div
-            className="text-left space-y-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 1.2 }}
-            viewport={{ once: false, margin: "-100px" }}
-          >
-            {[
-              "Flowscape was founded with a simple mission to help startups and small business owners build a powerful online identity without breaking the bank.",
-              "We believe every entrepreneur deserves a modern, professional website or app that doesn't cost a fortune or take months to launch. That's why we created an intuitive platform where your ideas can come to life designed, built, and launched in days.",
-              "Our team of developers and creators work day and night to ensure you get the best experience and not the highest price tag. Whether you're just starting out or scaling fast, Flowscape is here to help you grow on your terms, at your pace."
-            ].map((paragraph, index) => (
-                             <motion.p
-                 key={index}
-                 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed hover:text-gray-200 transition-all duration-500 cursor-default"
-                initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0, 
-                  filter: "blur(0px)",
-                  transition: { 
-                    duration: 0.8, 
-                    delay: index * 0.3,
-                    ease: "easeOut"
-                  }
-                }}
-                whileHover={{
-                  scale: 1.02,
-                  transition: { duration: 0.3 }
-                }}
-                viewport={{ once: false, margin: "-50px" }}
-              >
-                {paragraph}
-              </motion.p>
-            ))}
-          </motion.div>
+          <div className="text-left space-y-8">
+            <ScrollReveal
+              baseOpacity={0}
+              enableBlur={true}
+              baseRotation={5}
+              blurStrength={10}
+              textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
+            >
+              Flowscape was founded with a simple mission to help startups and small business owners build a powerful online identity without breaking the bank.
+            </ScrollReveal>
+            
+            <ScrollReveal
+              baseOpacity={0}
+              enableBlur={true}
+              baseRotation={5}
+              blurStrength={10}
+              textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
+            >
+              We believe every entrepreneur deserves a modern, professional website or app that doesn't cost a fortune or take months to launch. That's why we created an intuitive platform where your ideas can come to life designed, built, and launched in days.
+            </ScrollReveal>
+            
+            <ScrollReveal
+              baseOpacity={0}
+              enableBlur={true}
+              baseRotation={5}
+              blurStrength={10}
+              textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
+            >
+              Our team of developers and creators work day and night to ensure you get the best experience and not the highest price tag. Whether you're just starting out or scaling fast, Flowscape is here to help you grow on your terms, at your pace.
+            </ScrollReveal>
+          </div>
         </div>
 
         {/* Bottom blur effect */}
@@ -559,132 +664,109 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/30 to-black pointer-events-none"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto">
-          {/* Section Header */}
-          <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            {/* Animated Main Title */}
-            <div className="relative mb-6">
-              <motion.h2 
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-2 leading-tight tracking-tight"
-                style={{ color: '#ffffff' }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.2 }}
-                viewport={{ once: true }}
-              >
-                {"Built with Innovation".split("").map((char, index) => (
-                  <motion.span
-                    key={index}
-                    className="inline-block text-white"
-                    style={{ color: '#ffffff' }}
-                    initial={{ opacity: 0, y: 50, rotateX: -90 }}
-                    whileInView={{ 
-                      opacity: 1, 
-                      y: 0, 
-                      rotateX: 0,
-                      transition: {
-                        duration: 0.8,
-                        delay: index * 0.05,
-                        ease: "easeOut"
-                      }
-                    }}
-                    whileHover={{
-                      scale: 1.2,
-                      color: "#a855f7",
-                      textShadow: "0 0 20px rgba(168, 85, 247, 0.8)",
-                      transition: { duration: 0.3 }
-                    }}
-                    viewport={{ once: true }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </motion.h2>
-              
-              {/* Floating particles */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-purple-400 rounded-full opacity-60"
-                  style={{
-                    left: `${20 + (i * 10)}%`,
-                    top: `${-20 + (i % 2) * 40}px`,
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    opacity: [0.3, 0.8, 0.3],
-                    scale: [0.8, 1.2, 0.8],
-                  }}
-                  transition={{
-                    duration: 3,
-                    delay: i * 0.2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-              
-              {/* Glowing orb effect */}
-              <motion.div
-                className="absolute inset-0 -z-10"
-                animate={{
-                  background: [
-                    "radial-gradient(circle at 30% 30%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)",
-                    "radial-gradient(circle at 70% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)",
-                    "radial-gradient(circle at 30% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)",
-                    "radial-gradient(circle at 70% 30%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)",
-                  ]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </div>
-            
-            {/* Animated subtitle */}
-            <motion.p 
-              className="text-xl text-gray-400 max-w-3xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+            {/* Left Column - Title and Text */}
+            <motion.div
+              className="text-left"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              {"Comprehensive solutions designed to elevate your business with cutting-edge technology and seamless user experiences.".split(" ").map((word, index) => (
-                <motion.span
-                  key={index}
-                  className="inline-block mr-1"
-                  initial={{ opacity: 0, filter: "blur(10px)" }}
-                  whileInView={{ 
-                    opacity: 1, 
-                    filter: "blur(0px)",
-                    transition: {
-                      duration: 0.3,
-                      delay: 1.2 + (index * 0.03)
-                    }
-                  }}
-                  whileHover={{
-                    color: "#d1d5db",
-                    scale: 1.05,
-                    transition: { duration: 0.2 }
-                  }}
-                  viewport={{ once: true }}
+              {/* Main Title with ScrollFloat */}
+              <div className="relative mb-6">
+                <ScrollFloat
+                  animationDuration={1}
+                  ease='back.inOut(2)'
+                  scrollStart='center bottom+=50%'
+                  scrollEnd='bottom bottom-=40%'
+                  stagger={0.03}
+                  containerClassName="text-left"
+                  textClassName="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight"
                 >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.p>
-          </motion.div>
+                  Built with Innovation
+                </ScrollFloat>
+              </div>
+              
+              {/* Subtitle */}
+              <p className="text-lg md:text-xl text-gray-400 max-w-2xl">
+                Comprehensive solutions designed to elevate your business with cutting-edge technology and seamless user experiences.
+              </p>
+            </motion.div>
+
+            {/* Right Column - Icon Cloud */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="w-full max-w-lg">
+                <IconCloud
+                  iconSlugs={[
+                    "typescript",
+                    "javascript",
+                    "react",
+                    "nextdotjs",
+                    "nodejs",
+                    "python",
+                    "tailwindcss",
+                    "framermotion",
+                    "supabase",
+                    "vercel",
+                    "git",
+                    "github",
+                    "figma",
+                    "docker",
+                    "postgresql",
+                    "mongodb",
+                    "redis",
+                    "graphql",
+                    "html5",
+                    "css3",
+                    "sass",
+                    "webpack",
+                    "vite",
+                    "eslint",
+                    "prettier"
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Features Section with Hover Effects */}
           <FeaturesSectionWithHoverEffects />
         </div>
+      </section>
+
+      {/* UI/UX Design Section */}
+      <section className="relative">
+        <UIUXDesignFeature />
+      </section>
+
+      {/* How to Get Started Section */}
+      <section className="relative py-16 md:py-32 bg-black">
+        <FeatureSteps
+          features={[
+            {
+              step: "Step 1",
+              title: "Choose Your Pricing Plan",
+              content: "Select the perfect plan that fits your needs and budget. Sign up with just a few clicks to get started on your journey.",
+              image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+            },
+            {
+              step: "Step 2", 
+              title: "Access Your Dashboard",
+              content: "Login to your personalized dashboard and create a new project. Our intuitive interface makes it easy to manage everything in one place.",
+              image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+            },
+            {
+              step: "Step 3",
+              title: "Submit Your Requirements",
+              content: "Update all your project requirements and preferences. Then sit back and relax while we craft your perfect web application.",
+              image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+            }
+          ]}
+          autoPlayInterval={5000}
+          imageHeight="h-[300px] md:h-[400px]"
+        />
       </section>
 
       {/* Pricing Section */}
@@ -752,10 +834,17 @@ function App() {
             viewport={{ once: true }}
           />
 
-          {/* Feature Comparison Table - Hidden on Mobile */}
-          <div className="hidden md:block">
-          <FeatureTable />
-          </div>
+          {/* Feature Comparison Table - Hidden on Mobile and when no country is selected */}
+          {selectedCountry && (
+            <motion.div 
+              className="hidden md:block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <FeatureTable />
+            </motion.div>
+          )}
 
           {/* Final CTA */}
           <motion.div
@@ -790,61 +879,93 @@ function App() {
         />
         
         <div className="max-w-6xl mx-auto relative z-10">
-          {/* Header */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            {/* Badge */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left Column - Text Content */}
             <motion.div
-              className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-2 mb-8"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              className="space-y-8"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <span className="text-purple-300 font-medium text-sm">Comparison</span>
+              {/* Badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-2"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <span className="text-purple-300 font-medium text-sm">Comparison</span>
+              </motion.div>
+
+              <motion.h2
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                Flowscape vs. The Rest
+              </motion.h2>
+              
+              <motion.p
+                className="text-2xl md:text-3xl text-gray-500 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                Let's See the Difference
+              </motion.p>
+              
+              <motion.p
+                className="text-lg text-gray-400 max-w-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                viewport={{ once: true }}
+              >
+                Flowscape is designed to set your agency and portfolio apart with a premium, clutter-free layout that enhances your work. Experience the difference with cutting-edge technology and unmatched performance.
+              </motion.p>
             </motion.div>
 
-            <motion.h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+            {/* Right Column - CardSwap Component */}
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              Flowscape vs. The Rest
-            </motion.h2>
-            <motion.p
-              className="text-2xl md:text-3xl text-gray-500 mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              Let's See the Difference
-            </motion.p>
-            <motion.p
-              className="text-lg text-gray-400 max-w-3xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              viewport={{ once: true }}
-            >
-              Flowscape is designed to set your agency and portfolio apart with a premium, clutter-free layout that enhances your work.
-            </motion.p>
-          </motion.div>
-
-          {/* Comparison Grid */}
-          <ComparisonGrid />
+              <div style={{ height: '600px', position: 'relative' }}>
+                <CardSwap
+                  cardDistance={60}
+                  verticalDistance={70}
+                  delay={5000}
+                  pauseOnHover={false}
+                >
+                  <Card>
+                    <h3>Card 1</h3>
+                    <p>Your content here</p>
+                  </Card>
+                  <Card>
+                    <h3>Card 2</h3>
+                    <p>Your content here</p>
+                  </Card>
+                  <Card>
+                    <h3>Card 3</h3>
+                    <p>Your content here</p>
+                  </Card>
+                </CardSwap>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1101,6 +1222,9 @@ function App() {
           </motion.button>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Footer */}
       <Footer />
@@ -1782,8 +1906,8 @@ const PricingCards = () => {
                   <div className="grid grid-cols-3 gap-2 text-center">
                     {[0, 1, 2].map((planIndex) => {
                       const value = selectedPlan === 'business' 
-                        ? (feature as any)[['startup', 'risingStar', 'enterprise'][planIndex]]
-                        : (feature as any)[['lite', 'plus', 'pro'][planIndex]];
+                        ? (feature as BusinessFeature)[['startup', 'risingStar', 'enterprise'][planIndex] as keyof BusinessFeature]
+                        : (feature as PersonalFeature)[['lite', 'plus', 'pro'][planIndex] as keyof PersonalFeature];
                       
                       return (
                         <div key={planIndex} className="py-2">
@@ -1848,7 +1972,7 @@ const FeatureTable = () => {
     {
       name: "💳 Payment Gateway",
       features: [
-        { name: "Payment Gateway", startup: selectedCountry === 'Bangladesh' ? "Stripe + Paypal + (Bkash + Nagad + SSL Commerce for Bangladesh)" : "Stripe + Paypal + Bkash + Nagad + SSL Commerce for Bangladesh", risingStar: "Stripe + Paypal + Bkash + Nagad + SSL Commerce for Bangladesh", enterprise: "Custom" },
+        { name: "Payment Gateway", startup: selectedCountry === 'Bangladesh' ? "Bkash + Nagad + SSL" : "Stripe + Paypal", risingStar: "All Payment Methods", enterprise: "Custom" },
         { name: "Split Payment", startup: false, risingStar: true, enterprise: true },
         { name: "BNPL", startup: false, risingStar: true, enterprise: true }
       ]
@@ -1856,7 +1980,7 @@ const FeatureTable = () => {
     {
       name: "📈 Monetization & SEO",
       features: [
-        { name: "Monetization", startup: "Yes (Google Adsense)", risingStar: "Yes (Google Adsense)", enterprise: "Yes (Google Adsense)" },
+        { name: "Monetization", startup: "Google Adsense", risingStar: "Google Adsense", enterprise: "Custom" },
         { name: "SEO", startup: "Optimized", risingStar: "Optimized", enterprise: "Optimized" }
       ]
     },
@@ -2037,7 +2161,7 @@ const FeatureTable = () => {
                 {/* First Column */}
                 <div className="text-center">
                   {(() => {
-                    const value = selectedPlan === 'business' ? (feature as any).startup : (feature as any).lite;
+                    const value = selectedPlan === 'business' ? (feature as BusinessFeature).startup : (feature as PersonalFeature).lite;
                     return typeof value === 'boolean' ? (
                       value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
@@ -2057,7 +2181,7 @@ const FeatureTable = () => {
                 {/* Second Column */}
                 <div className="text-center">
                   {(() => {
-                    const value = selectedPlan === 'business' ? (feature as any).risingStar : (feature as any).plus;
+                    const value = selectedPlan === 'business' ? (feature as BusinessFeature).risingStar : (feature as PersonalFeature).plus;
                     return typeof value === 'boolean' ? (
                       value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
@@ -2077,7 +2201,7 @@ const FeatureTable = () => {
                 {/* Third Column */}
                 <div className="text-center">
                   {(() => {
-                    const value = selectedPlan === 'business' ? (feature as any).enterprise : (feature as any).pro;
+                    const value = selectedPlan === 'business' ? (feature as BusinessFeature).enterprise : (feature as PersonalFeature).pro;
                     return typeof value === 'boolean' ? (
                       value ? (
                       <div className="w-4 h-4 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
@@ -2102,129 +2226,7 @@ const FeatureTable = () => {
   );
 };
 
-const ComparisonGrid = () => {
-  const comparisonData = [
-    {
-      category: "The Rest",
-      items: [
-        { text: "Generic, Overused Layouts", negative: true },
-        { text: "Cluttered & Outdated UI", negative: true },
-        { text: "Slow & Unoptimized", negative: true },
-        { text: "Limited Customization", negative: true },
-        { text: "Short-Term Relevance", negative: true }
-      ]
-    },
-    {
-      category: "Flowscape",
-      items: [
-        { text: "AI-Driven Design", negative: false },
-        { text: "Premium, Minimal Aesthetic", negative: false },
-        { text: "Performance Optimized", negative: false },
-        { text: "Future-Proof Technology", negative: false },
-        { text: "Unmatched Flexibility", negative: false }
-      ]
-    }
-  ];
 
-  return (
-    <motion.div
-      className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-      viewport={{ once: true }}
-    >
-      {comparisonData.map((column, columnIndex) => (
-        <motion.div
-          key={column.category}
-          className={`bg-gray-900/40 backdrop-blur-sm border rounded-3xl p-8 ${
-            column.category === "Flowscape" 
-              ? "border-purple-500/30 bg-gradient-to-b from-purple-500/10 to-transparent" 
-              : "border-gray-800/50"
-          }`}
-          initial={{ opacity: 0, x: columnIndex === 0 ? -50 : 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 + (columnIndex * 0.1) }}
-          viewport={{ once: true }}
-          whileHover={{ scale: 1.02 }}
-        >
-          {/* Column Header */}
-          <div className="text-center mb-8">
-            <h3 className={`text-2xl font-bold mb-2 ${
-              column.category === "Flowscape" ? "text-white" : "text-gray-400"
-            }`}>
-              {column.category}
-            </h3>
-            {column.category === "Flowscape" && (
-              <div className="w-12 h-1 bg-purple-500 rounded-full mx-auto"></div>
-            )}
-          </div>
-
-          {/* Feature List */}
-          <div className="space-y-6">
-            {column.items.map((item, itemIndex) => (
-              <motion.div
-                key={itemIndex}
-                className="flex items-start gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: 0.5 + (columnIndex * 0.1) + (itemIndex * 0.05) 
-                }}
-                viewport={{ once: true }}
-                whileHover={{ x: 5 }}
-              >
-                {/* Icon */}
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ${
-                  item.negative 
-                    ? "bg-red-500/20 border border-red-500/30" 
-                    : "bg-purple-500/20 border border-purple-500/30"
-                }`}>
-                  {item.negative ? (
-                    <svg className="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-
-                {/* Text */}
-                <span className={`text-lg font-medium leading-relaxed ${
-                  item.negative ? "text-gray-400" : "text-white"
-                }`}>
-                  {item.text}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Bottom decoration for Flowscape column */}
-          {column.category === "Flowscape" && (
-            <motion.div
-              className="mt-8 pt-6 border-t border-purple-500/20"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 text-purple-400 text-sm font-medium">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                  <span>The Clear Winner</span>
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-};
 
 const FAQAccordion = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
