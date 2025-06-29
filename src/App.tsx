@@ -19,7 +19,8 @@ import { FeatureSteps } from './components/ui/feature-steps';
 import { IconCloud } from './components/ui/icon-cloud';
 import TestimonialsSection from './components/ui/testimonials';
 import CardSwap, { Card } from './components/ui/CardSwap';
-import { GlareCard } from './components/ui/glare-card';
+
+import { LTRVersion } from './components/ui/project-versions';
 
 // Type definitions
 type FeatureValue = string | boolean | number;
@@ -528,65 +529,8 @@ function App() {
             </p>
           </motion.div>
 
-          {/* GlareCards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <GlareCard>
-                <div className="p-6 h-full flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-3">E-Commerce Platform</h3>
-                    <p className="text-gray-400 text-sm">Modern online store with seamless payment integration and inventory management.</p>
-                  </div>
-                  <div className="mt-4">
-                    <span className="text-purple-400 text-xs font-medium">React • Node.js • Stripe</span>
-                  </div>
-                </div>
-              </GlareCard>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <GlareCard>
-                <div className="p-6 h-full flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-3">SaaS Dashboard</h3>
-                    <p className="text-gray-400 text-sm">Comprehensive analytics dashboard with real-time data visualization and reporting.</p>
-                  </div>
-                  <div className="mt-4">
-                    <span className="text-purple-400 text-xs font-medium">Next.js • PostgreSQL • Charts</span>
-                  </div>
-                </div>
-              </GlareCard>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <GlareCard>
-                <div className="p-6 h-full flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-3">Mobile App</h3>
-                    <p className="text-gray-400 text-sm">Cross-platform mobile application with native performance and smooth animations.</p>
-                  </div>
-                  <div className="mt-4">
-                    <span className="text-purple-400 text-xs font-medium">React Native • Firebase</span>
-                  </div>
-                </div>
-              </GlareCard>
-            </motion.div>
-          </div>
+          {/* Project Showcase */}
+          <LTRVersion />
         </div>
 
         {/* Bottom blur effect */}
