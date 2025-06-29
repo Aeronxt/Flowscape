@@ -10,32 +10,25 @@ const LTRVersion = () => (
       <ProjectShowcase
         testimonials={[
           {
-            name: "Plum Cave",
-            quote: 'A cloud backup solution that employs the "ChaCha20 + Serpent-256 CBC + HMAC-SHA3-512" authenticated encryption scheme for data encryption and ML-KEM-1024 for quantum-resistant key exchange.',
+            name: "KontaNibo",
+            quote: "Bangladesh's first true financial and lifestyle comparison site built with interactive comparison systems.",
+            designation: "Vite + React Project",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture3.PNG",
+            link: "https://kontanibo.com",
+          },
+          {
+            name: "Aeron X Technologies",
+            quote: "A cutting-edge technology blog platform designed for developers, featuring the latest insights and innovations in the tech industry.",
+            designation: "Technology Agency Blog",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture2222.PNG",
+            link: "https://aeronxtt.com",
+          },
+          {
+            name: "ATXR Racing",
+            quote: "A Next.js project built for ATXR Racing team to support its online identity and track experience booking platform.",
             designation: "Next.js Project",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/plum-cave.webp",
-            link: "https://plum-cave.netlify.app/",
-          },
-          {
-            name: "Namer UI",
-            quote: "A comprehensive collection of modern, attractive, and unique reusable TypeScript components crafted specifically for Next.js.",
-            designation: "Next.js Project",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/namer-ui.webp",
-            link: "https://namer-ui.netlify.app/",
-          },
-          {
-            name: "Namer UI For Vue",
-            quote: "A collection of customizable, reusable TypeScript, vanilla CSS components for Vue 3.",
-            designation: "Vue Project",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/namer-ui-for-vue.webp",
-            link: "https://namer-ui-for-vue.netlify.app/",
-          },
-          {
-            name: "React Cryptographic Toolkit",
-            quote: "A web app that's capable of encrypting user data, hashing strings, and calculating tags using the available HMAC algorithms. Please don't judge me too harshly for it; this is the first React app I ever made.",
-            designation: "React Project",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/rct.webp",
-            link: "https://northstrix.github.io/React-Cryptographic-Toolkit/",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture.PNG",
+            link: "https://atxrracing.com",
           },
         ]}
         colors={{
@@ -75,32 +68,25 @@ const RTLVersion = () => (
       <ProjectShowcase
         testimonials={[
           {
-            name: "פלאם קייב",
-            quote: 'פתרון גיבוי בענן המשתמש בסכימת הצפנה מאומתת "HMAC-SHA3-512 + CBC Serpent-256 + ChaCha20" להצפנת נתונים ו-ML-KEM-1024 לחילופי מפתחות עמידים לקוונטים.',
+            name: "KontaNibo",
+            quote: "אתר ההשוואה הפיננסי וסגנון החיים הראשון והאמיתי של בנגלדש שנבנה עם מערכות השוואה אינטראקטיביות.",
+            designation: "פרויקט Vite + React",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture3.PNG",
+            link: "https://kontanibo.com",
+          },
+          {
+            name: "Aeron X Technologies",
+            quote: "פלטפורמת בלוג טכנולוגי חדשנית המיועדת למפתחים, הכוללת את התובנות והחידושים האחרונים בתעשיית הטכנולוגיה.",
+            designation: "בלוג סוכנות טכנולוגיה",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture2222.PNG",
+            link: "https://aeronxtt.com",
+          },
+          {
+            name: "ATXR Racing",
+            quote: "פרויקט Next.js שנבנה עבור צוות ATXR Racing לתמיכה בזהות המקוונת שלו ובפלטפורמת הזמנת חוויות מסלול.",
             designation: "פרויקט Next.js",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/plum-cave-hebrew.webp",
-            link: "https://plum-cave.netlify.app/",
-          },
-          {
-            name: "נמר UI",
-            quote: "אוסף מקיף של רכיבי TypeScript מודרניים, אטרקטיביים וייחודיים לשימוש חוזר המיועדים במיוחד ל-Next.js.",
-            designation: "פרויקט Next.js",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/namer-ui.webp",
-            link: "https://namer-ui.netlify.app/",
-          },
-          {
-            name: "נמר UI ל-Vue",
-            quote: "אוסף של רכיבי TypeScript ו-CSS ונילה, הניתנים להתאמה אישית ולשימוש חוזר עבור Vue 3.",
-            designation: "פרויקט Vue",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/namer-ui-for-vue.webp",
-            link: "https://namer-ui-for-vue.netlify.app/",
-          },
-          {
-            name: "React קריפטוגרפיק טולקיט",
-            quote: "אפליקציית אינטרנט המסוגלת להצפין נתוני משתמש, לבצע האש של מחרוזות ולחשב תגיות באמצעות אלגוריתמי HMAC הזמינים. אל תשפטו אותי בחומרה - זוהי האפליקציה הראשונה שיצרתי ב-React.",
-            designation: "פרויקט React",
-            src: "https://raw.githubusercontent.com/Northstrix/my-portfolio/refs/heads/main/public/rct.webp",
-            link: "https://northstrix.github.io/React-Cryptographic-Toolkit/",
+            src: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture.PNG",
+            link: "https://atxrracing.com",
           },
         ]}
         colors={{
