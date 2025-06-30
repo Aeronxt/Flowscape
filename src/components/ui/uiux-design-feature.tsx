@@ -39,6 +39,10 @@ function UIUXDesignFeature() {
             </p>
           </div>
           <div className="pt-12 w-full">
+            <div className="flex justify-between mb-4 text-lg font-medium">
+              <span className="text-gray-400">See how others design</span>
+              <span className="text-purple-500">vs us</span>
+            </div>
             <div
               className="relative aspect-video w-full h-full overflow-hidden rounded-2xl select-none"
               onMouseMove={onMouseMove}
@@ -69,16 +73,16 @@ function UIUXDesignFeature() {
                 </button>
               </div>
               <img
-                src="https://www.twblocks.com/_next/image?url=%2Ffeature8.png&w=3840&q=75"
-                alt="feature8"
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture231.PNG"
+                alt="UI Design Dark Mode"
                 className="absolute left-0 top-0 z-10 w-full h-full aspect-video rounded-2xl select-none border"
                 style={{
                   clipPath: "inset(0 0 0 " + inset + "%)",
                 }}
               />
               <img
-                src="https://www.twblocks.com/_next/image?url=%2Fdarkmode-feature8.png&w=3840&q=75"
-                alt="darkmode-feature8.png"
+                src="https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture221312312.PNG"
+                alt="UI Design Light Mode"
                 className="absolute left-0 top-0 w-full h-full aspect-video rounded-2xl select-none border"
               />
             </div>

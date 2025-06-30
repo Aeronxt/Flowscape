@@ -18,8 +18,7 @@ import ScrollReveal from './components/ui/ScrollReveal';
 import { FeatureSteps } from './components/ui/feature-steps';
 import { IconCloud } from './components/ui/icon-cloud';
 import TestimonialsSection from './components/ui/testimonials';
-import CardSwap, { Card } from './components/ui/CardSwap';
-
+import { ComparisonSection } from './components/ui/comparison-section';
 import { LTRVersion } from './components/ui/project-versions';
 
 // Type definitions
@@ -693,19 +692,19 @@ function App() {
               step: "Step 1",
               title: "Choose Your Pricing Plan",
               content: "Select the perfect plan that fits your needs and budget. Sign up with just a few clicks to get started on your journey.",
-              image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+              image: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture%20(2).PNG"
             },
             {
               step: "Step 2", 
               title: "Access Your Dashboard",
               content: "Login to your personalized dashboard and create a new project. Our intuitive interface makes it easy to manage everything in one place.",
-              image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+              image: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture231.PNG"
             },
             {
               step: "Step 3",
               title: "Submit Your Requirements",
               content: "Update all your project requirements and preferences. Then sit back and relax while we craft your perfect web application.",
-              image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+              image: "https://cpwowrsesrefnugctpos.supabase.co/storage/v1/object/public/flowscape//Capture32121.PNG"
             }
           ]}
           autoPlayInterval={5000}
@@ -813,105 +812,7 @@ function App() {
       </section>
 
       {/* Comparison Section */}
-      <section className="py-32 px-6 relative">
-        <InteractiveGridPattern
-          width={50}
-          height={50}
-          squares={[20, 10]}
-          className="opacity-5"
-          squaresClassName="stroke-gray-800/20 hover:fill-purple-500/5"
-        />
-        
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left Column - Text Content */}
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              {/* Badge */}
-              <motion.div
-                className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-2"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <span className="text-purple-300 font-medium text-sm">Comparison</span>
-              </motion.div>
-
-              <motion.h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-              >
-                Flowscape vs. The Rest
-              </motion.h2>
-              
-              <motion.p
-                className="text-2xl md:text-3xl text-gray-500 mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-              >
-                Let's See the Difference
-              </motion.p>
-              
-              <motion.p
-                className="text-lg text-gray-400 max-w-2xl"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                viewport={{ once: true }}
-              >
-                Flowscape is designed to set your agency and portfolio apart with a premium, clutter-free layout that enhances your work. Experience the difference with cutting-edge technology and unmatched performance.
-              </motion.p>
-            </motion.div>
-
-            {/* Right Column - CardSwap Component */}
-            <motion.div
-              className="relative"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div style={{ height: '600px', position: 'relative' }}>
-                <CardSwap
-                  cardDistance={60}
-                  verticalDistance={70}
-                  delay={5000}
-                  pauseOnHover={false}
-                >
-                  <Card>
-                    <h3>Card 1</h3>
-                    <p>Your content here</p>
-                  </Card>
-                  <Card>
-                    <h3>Card 2</h3>
-                    <p>Your content here</p>
-                  </Card>
-                  <Card>
-                    <h3>Card 3</h3>
-                    <p>Your content here</p>
-                  </Card>
-                </CardSwap>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <ComparisonSection />
 
       {/* FAQ Section */}
       <section id="faq" className="py-32 px-6 relative">
@@ -2177,28 +2078,44 @@ const FAQAccordion = () => {
 
   const faqData = [
     {
-      question: "What do I need to get started?",
-      answer: "Getting started with Flowscape is simple! You just need a modern web browser and an internet connection. Our platform is designed to be user-friendly, so no technical expertise is required. Once you sign up, you'll have access to our intuitive dashboard where you can begin building your project immediately."
+      question: "What's included in your subscription plan?",
+      answer: "Unlimited website & app updates, global CDN hosting with auto‑renewing SSL, access to our component library, analytics dashboard with A/B testing, and priority email support with bi‑weekly sprint reviews."
     },
     {
-      question: "What kind of customization is available?",
-      answer: "Flowscape offers extensive customization options including custom branding, color schemes, layouts, and functionality. You can modify templates, add custom code, integrate third-party services, and create unique user experiences tailored to your specific needs. Our flexible architecture supports both simple modifications and complex customizations."
+      question: "How does your pricing compare to traditional agencies?",
+      answer: "Traditional agencies often charge $5,000–$20,000 up front plus $100+/hr for changes. Our plans start at $9/mo with no upfront fees."
     },
     {
-      question: "How easy is it to edit for beginners?",
-      answer: "Very easy! Flowscape is built with beginners in mind. Our drag-and-drop interface, visual editor, and pre-built components make it simple to create professional websites without coding knowledge. We also provide comprehensive tutorials, documentation, and support to help you get started quickly."
+      question: "Can I cancel or upgrade my plan at any time?",
+      answer: "Yes. You can upgrade mid‑cycle, pause for up to two months, or cancel with 30 days' notice."
     },
     {
-      question: "Let me know more about moneyback guarantee?",
-      answer: "We offer a 30-day money-back guarantee on all our plans. If you're not completely satisfied with Flowscape within the first 30 days of your purchase, simply contact our support team and we'll provide a full refund, no questions asked. This guarantee reflects our confidence in the quality and value of our platform."
+      question: "How long does it take to launch a new site or app?",
+      answer: "Most go live in 2–4 days thanks to our agile, component‑driven process. More complex features may require additional sprints, but you always get incremental value each cycle."
     },
     {
-      question: "Do I need to know how to code?",
-      answer: "Not at all! Flowscape is designed for users of all skill levels. While coding knowledge can be helpful for advanced customizations, it's not required. Our visual editor, pre-built templates, and intuitive interface allow you to create stunning websites without writing a single line of code. However, if you do know how to code, you have full access to customize everything."
+      question: "What technologies do you use?",
+      answer: "Frontend: Next.js or Vite + React, Tailwind CSS, Framer Motion\nBackend: Node.js API routes or Supabase\nDatabase: PostgreSQL or Supabase\nDevOps: CI/CD with zero‑downtime deploys, global CDN, auto SSL"
     },
     {
-      question: "What will I get after purchasing the template?",
-      answer: "After purchase, you'll receive immediate access to the complete Flowscape template package including all source files, documentation, installation guide, and lifetime updates. You'll also get access to our premium support community, exclusive resources, and priority customer support to help you make the most of your investment."
+      question: "Do you provide content creation services?",
+      answer: "Yes. We offer SEO‑optimized copywriting, professional photography, and motion‑graphics or explainer video production as add‑on services."
+    },
+    {
+      question: "How are updates and new features delivered?",
+      answer: "We work in two‑week sprints: you submit requests, we prioritize and plan, then deliver a live demo and release notes at the end of each sprint."
+    },
+    {
+      question: "What happens if I need an emergency fix?",
+      answer: "All plans include priority support. Critical issues (site down, security breach) get a one‑hour response and immediate out‑of‑cycle deployment."
+    },
+    {
+      question: "Can you migrate my existing site?",
+      answer: "Absolutely. We migrate from WordPress, Shopify, Drupal, custom CMS, or static HTML, preserving SEO and URL structure with zero‑downtime redirects."
+    },
+    {
+      question: "How do you ensure performance and security?",
+      answer: "Performance: Core Web Vitals audits, image optimization, code splitting, aggressive caching.\nSecurity: WAF protections, DDoS mitigation via Cloudflare, regular dependency updates, and monthly security scans."
     }
   ];
 
@@ -2293,8 +2210,20 @@ const ContactForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    
+    // Format the email body with form data
+    const emailBody = `
+First Name: ${formData.firstName}
+Last Name: ${formData.lastName}
+Email: ${formData.email}
+Message: ${formData.message}
+    `.trim();
+
+    // Encode the email parameters
+    const mailtoLink = `mailto:info@flowscape.xyz?subject=Contact Form Submission&body=${encodeURIComponent(emailBody)}`;
+    
+    // Open the local mail app
+    window.location.href = mailtoLink;
   };
 
   return (
@@ -2351,7 +2280,7 @@ const ContactForm = () => {
           </motion.div>
         </div>
 
-        {/* Email Field */}
+        {/* Email */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -2359,7 +2288,7 @@ const ContactForm = () => {
           viewport={{ once: true }}
         >
           <label className="block text-white text-sm font-medium mb-3">
-            How can we reach you?*
+            Email*
           </label>
           <input
             type="email"
@@ -2372,7 +2301,7 @@ const ContactForm = () => {
           />
         </motion.div>
 
-        {/* Message Field */}
+        {/* Message */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -2380,46 +2309,34 @@ const ContactForm = () => {
           viewport={{ once: true }}
         >
           <label className="block text-white text-sm font-medium mb-3">
-            Tell us about your project
+            Message*
           </label>
           <textarea
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            placeholder="Describe your project, goals, and how we can help you..."
-            rows={5}
+            placeholder="Tell us about your project..."
+            rows={4}
             className="w-full bg-gray-900/60 border border-gray-700/50 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300 resize-none"
+            required
           />
         </motion.div>
 
         {/* Submit Button */}
         <motion.div
-          className="pt-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.4 }}
           viewport={{ once: true }}
+          className="flex justify-end"
         >
-          <motion.button
+          <button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-xl font-medium transition-colors duration-300"
           >
             Send Message
-          </motion.button>
+          </button>
         </motion.div>
-
-        {/* Additional Info */}
-        <motion.p
-          className="text-gray-400 text-sm text-center pt-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.5 }}
-          viewport={{ once: true }}
-        >
-          We'll get back to you within 24 hours. Your privacy is important to us.
-        </motion.p>
       </form>
     </motion.div>
   );
