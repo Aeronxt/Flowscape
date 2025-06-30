@@ -463,8 +463,8 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="block text-white">Helping Startups and SME's</span>
-            <span className="block text-white">Get a Visual Identity</span>
+            <span className="block text-white">Your Vision, Our Pixel‑Perfect</span>
+            <span className="block text-white">Execution.</span>
           </motion.h1>
 
           {/* Subtitle */}
