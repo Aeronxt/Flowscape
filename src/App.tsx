@@ -19,7 +19,7 @@ import { FeatureSteps } from './components/ui/feature-steps';
 import { IconCloud } from './components/ui/icon-cloud';
 import TestimonialsSection from './components/ui/testimonials';
 import { ComparisonSection } from './components/ui/comparison-section';
-import { LTRVersion } from './components/ui/project-versions';
+import ShowcaseSection from './components/ui/project-versions';
 
 // Type definitions
 type FeatureValue = string | boolean | number;
@@ -507,33 +507,8 @@ function App() {
       </section>
 
       {/* View our Work Section */}
-      <section className="relative py-16 md:py-32 px-4 md:px-6 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/50 to-black"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto">
-          {/* Section Title */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              View our Work
-            </h2>
-            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-              Explore our portfolio of stunning web applications and digital experiences crafted for businesses worldwide.
-            </p>
-          </motion.div>
-
-          {/* Project Showcase */}
-          <LTRVersion />
-        </div>
-
-        {/* Bottom blur effect */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none"></div>
+      <section className="relative overflow-hidden">
+        <ShowcaseSection />
       </section>
 
       {/* About Us Section */}

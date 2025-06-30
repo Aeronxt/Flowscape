@@ -1,212 +1,82 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
 
-interface Testimonial {
+interface Project {
   name: string;
-  quote: string;
-  designation: string;
-  src: string;
+  description: string;
+  type: string;
+  image: string;
   link: string;
 }
 
 interface ProjectShowcaseProps {
-  testimonials: Testimonial[];
-  colors?: {
-    name?: string;
-    position?: string;
-    testimony?: string;
-  };
-  fontSizes?: {
-    name?: string;
-    position?: string;
-    testimony?: string;
-  };
-  spacing?: {
-    nameTop?: string;
-    nameBottom?: string;
-    positionTop?: string;
-    positionBottom?: string;
-    testimonyTop?: string;
-    testimonyBottom?: string;
-    lineHeight?: string;
-  };
-  isRTL?: boolean;
-  buttonInscriptions?: {
-    previousButton?: string;
-    nextButton?: string;
-    openWebAppButton?: string;
-  };
-  halomotButtonGradient?: string;
-  halomotButtonBackground?: string;
-  halomotButtonTextColor?: string;
-  halomotButtonOuterBorderRadius?: string;
-  halomotButtonInnerBorderRadius?: string;
-  halomotButtonHoverTextColor?: string;
-  onItemClick?: (link: string) => void;
+  projects: Project[];
 }
 
-export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
-  testimonials,
-  colors = {},
-  fontSizes = {},
-  spacing = {},
-  isRTL = false,
-  buttonInscriptions = {},
-  halomotButtonGradient = "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
-  halomotButtonBackground = "#1a1a1a",
-  halomotButtonTextColor = "#ffffff",
-  halomotButtonOuterBorderRadius = "12px",
-  halomotButtonInnerBorderRadius = "8px",
-  halomotButtonHoverTextColor = "#ffffff",
-  onItemClick
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const currentTestimonial = testimonials[currentIndex];
-
-  const handleOpenProject = () => {
-    if (onItemClick && currentTestimonial.link) {
-      onItemClick(currentTestimonial.link);
-    }
+export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ projects }) => {
+  const handleProjectClick = (link: string) => {
+    window.open(link, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <div className={`relative w-full max-w-6xl mx-auto p-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        {/* Project Image */}
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5 }}
-              className="relative overflow-hidden rounded-lg shadow-2xl"
-            >
-              <img
-                src={currentTestimonial.src}
-                alt={currentTestimonial.name}
-                className="w-full h-[400px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-            </motion.div>
-          </AnimatePresence>
+    <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-bold text-white mb-6"
+          >
+            Showcase
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-lg text-gray-400"
+          >
+            Companies choose Flowscape to build their landing pages.
+          </motion.p>
         </div>
 
-        {/* Project Details */}
-        <div className="space-y-6">
-          <AnimatePresence mode="wait">
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project, index) => (
             <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: isRTL ? 50 : -50 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-4"
+              key={project.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              onClick={() => handleProjectClick(project.link)}
+              className="group cursor-pointer"
             >
-              <h3 
-                className="text-3xl font-bold text-white"
-                style={{ 
-                  color: colors.name || '#ffffff',
-                  fontSize: fontSizes.name || '1.875rem',
-                  marginTop: spacing.nameTop || '0',
-                  marginBottom: spacing.nameBottom || '0'
-                }}
-              >
-                {currentTestimonial.name}
-              </h3>
-              
-              <p 
-                className="text-purple-400 font-medium"
-                style={{ 
-                  color: colors.position || '#a855f7',
-                  fontSize: fontSizes.position || '1rem',
-                  marginTop: spacing.positionTop || '0',
-                  marginBottom: spacing.positionBottom || '0'
-                }}
-              >
-                {currentTestimonial.designation}
-              </p>
-              
-              <p 
-                className="text-gray-300 leading-relaxed"
-                style={{ 
-                  color: colors.testimony || '#d1d5db',
-                  fontSize: fontSizes.testimony || '1rem',
-                  marginTop: spacing.testimonyTop || '0',
-                  marginBottom: spacing.testimonyBottom || '0',
-                  lineHeight: spacing.lineHeight || '1.75'
-                }}
-              >
-                {currentTestimonial.quote}
-              </p>
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-900/10 border border-purple-500/10">
+                {/* Project Image */}
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.name}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                </div>
+
+                {/* Project Info */}
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-white mb-2">{project.name}</h3>
+                  <p className="text-purple-400 text-sm mb-3">{project.type}</p>
+                  <p className="text-gray-400 text-sm line-clamp-2">{project.description}</p>
+                </div>
+              </div>
             </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-4">
-            <div className="flex space-x-2">
-              <button
-                onClick={prevTestimonial}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
-                style={{
-                  background: halomotButtonBackground,
-                  borderRadius: halomotButtonOuterBorderRadius
-                }}
-              >
-                <ChevronLeft className="w-5 h-5 text-white" />
-              </button>
-              
-              <button
-                onClick={nextTestimonial}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
-                style={{
-                  background: halomotButtonBackground,
-                  borderRadius: halomotButtonOuterBorderRadius
-                }}
-              >
-                <ChevronRight className="w-5 h-5 text-white" />
-              </button>
-            </div>
-
-            <button
-              onClick={handleOpenProject}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-              style={{
-                background: halomotButtonGradient,
-                color: halomotButtonTextColor,
-                borderRadius: halomotButtonInnerBorderRadius
-              }}
-            >
-              <span>{buttonInscriptions.openWebAppButton || 'Open Project'}</span>
-              <ExternalLink className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Progress Indicators */}
-          <div className="flex space-x-2 pt-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                  index === currentIndex ? 'bg-purple-500 w-8' : 'bg-gray-600'
-                }`}
-              />
-            ))}
-          </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }; 
