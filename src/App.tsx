@@ -20,6 +20,7 @@ import { IconCloud } from './components/ui/icon-cloud';
 import TestimonialsSection from './components/ui/testimonials';
 import { ComparisonSection } from './components/ui/comparison-section';
 import ShowcaseSection from './components/ui/project-versions';
+import { PricingCard, type PricingCardProps } from './components/ui/animated-glassy-pricing';
 
 // Type definitions
 type FeatureValue = string | boolean | number;
@@ -1369,7 +1370,7 @@ const PricingCards = () => {
     },
     {
       name: "Plus",
-      subtitle: "Best for small businesses",
+      subtitle: "Best for Landing pages",
       price: getPricing('plus'),
       period: "/month",
       description: "4 Pages + 1 Bonus",
@@ -1387,7 +1388,7 @@ const PricingCards = () => {
     },
     {
       name: "Pro",
-      subtitle: "For growing businesses",
+      subtitle: "For Persons with Complex Needs",
       price: getPricing('pro'),
       period: "/month",
       description: "10+ Pages + 1 Bonus",
@@ -1543,93 +1544,32 @@ const PricingCards = () => {
 
   return (
     <div ref={setPricingSectionRef} className="max-w-5xl mx-auto mb-16">
-      {/* Desktop View - Original Grid */}
-      <div className="hidden md:grid grid-cols-3 gap-6">
-      {plans.map((plan, index) => (
-        <motion.div
-          key={plan.name}
-          className={`relative bg-gray-900/40 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 ${
-            plan.popular 
-              ? 'border-blue-500/50 bg-gradient-to-b from-blue-500/10 to-transparent' 
-              : 'border-gray-800/50 hover:border-gray-700/50'
-          }`}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          viewport={{ once: true }}
-        >
-          {/* Popular Badge */}
-          {plan.popular && (
-            <div className="absolute -top-3 left-6">
-              <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                POPULAR
-              </div>
-            </div>
-          )}
-
-          {/* Plan Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-xl font-bold text-white">{plan.name}</h3>
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
-              </div>
-            </div>
-            <p className="text-gray-400 text-sm">{plan.subtitle}</p>
-            <div className="flex items-baseline gap-1 mt-3">
-              <span className="text-2xl font-bold text-white">{plan.price}</span>
-              <span className="text-gray-400 text-sm">{plan.period}</span>
-            </div>
-            <p className="text-gray-500 text-sm mt-1">{plan.description}</p>
-          </div>
-
-          {/* Features */}
-          <ul className="space-y-3 mb-6">
-              {/* Everything in [Plan] + indicator */}
-              {plan.includesEverythingFrom && (
-                <li className="flex items-start gap-3">
-                  <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                    <svg className="w-2.5 h-2.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span className="text-blue-300 text-sm font-medium">Everything in {plan.includesEverythingFrom} +</span>
-                </li>
-              )}
-              
-              {/* Individual features */}
-            {plan.features.map((feature, idx) => (
-              <li key={idx} className="flex items-start gap-3">
-                <div className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                  <svg className="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-gray-300 text-sm">{feature}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA Button */}
-          <motion.button
-            className={`w-full py-3 rounded-lg font-medium text-sm transition-all duration-300 ${
-              plan.popular
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-700 hover:border-gray-600'
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
+      {/* Desktop View - Animated Glassy Pricing Cards */}
+      <div className="hidden md:flex flex-col md:flex-row gap-8 md:gap-6 justify-center items-center w-full max-w-4xl mx-auto">
+        {plans.map((plan) => {
+          // Transform the plan data to match PricingCardProps interface
+          const pricingCardProps: PricingCardProps = {
+            planName: plan.name,
+            description: plan.subtitle,
+            price: plan.price, // Pass the full price string
+            features: plan.features,
+            buttonText: plan.cta,
+            isPopular: plan.popular,
+            buttonVariant: plan.popular ? 'primary' : 'secondary',
+            onClick: () => {
               if (plan.cta === 'Get started') {
                 window.open('https://dashboard.flowscape.xyz/', '_blank');
               }
-            }}
-          >
-            {plan.cta}
-          </motion.button>
-        </motion.div>
-      ))}
+            }
+          };
+          
+          return (
+            <PricingCard 
+              key={plan.name}
+              {...pricingCardProps}
+            />
+          );
+        })}
       </div>
 
       {/* Mobile View - Screenshot Style */}
