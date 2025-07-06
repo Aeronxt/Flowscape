@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GripVertical } from "lucide-react";
+import { GlowingFeatures } from "./glowing-features";
 
 function UIUXDesignFeature() {
   const [inset, setInset] = useState<number>(50);
@@ -39,6 +40,10 @@ function UIUXDesignFeature() {
             </p>
           </div>
           <div className="pt-12 w-full">
+            {/* Features Section */}
+            <div className="mb-12">
+              <GlowingFeatures />
+            </div>
             <div className="flex justify-between mb-4 text-lg font-medium">
               <span className="text-gray-400">See how others design</span>
               <span className="text-purple-500">vs us</span>
@@ -86,21 +91,6 @@ function UIUXDesignFeature() {
                 className="absolute left-0 top-0 w-full h-full aspect-video rounded-2xl select-none border"
               />
             </div>
-          </div>
-          
-          {/* Full description */}
-          <div className="mt-12 space-y-4">
-            <p className="text-base md:text-lg text-gray-400 leading-relaxed">
-              Our user‑centered design process begins with detailed user persona and journey mapping, ensuring we understand every touchpoint and pain‑point in your customer's workflow. From there, we build out information architecture and low‑fidelity wireframes, then iterate into high‑fidelity prototypes in Figma or Sketch, complete with design system tokens and atomic design components for maximum consistency and scalability.
-            </p>
-            
-            <p className="text-base md:text-lg text-gray-400 leading-relaxed">
-              Our UI work is fully responsive and mobile‑first, leveraging modern CSS techniques (Flexbox, Grid, utility‑first Tailwind) to adapt flawlessly across devices. We enhance every interaction with micro‑animations and motion design—powered by Framer Motion or CSS transitions—to guide users' attention and provide real‑time feedback. Rigorous usability testing, A/B experiments, and accessibility audits (WCAG 2.1 AA) ensure not only that your interface looks stunning but also performs under real‑world conditions and maximizes conversion rates.
-            </p>
-            
-            <p className="text-base md:text-lg text-gray-400 leading-relaxed">
-              By combining information hierarchy, visual hierarchy, and interaction design best practices, we deliver bespoke UI/UX solutions tailored to your brand's voice and your users' needs so you launch with confidence, knowing every button, every form, and every flow has been optimized for efficiency, engagement, and growth.
-            </p>
           </div>
         </div>
       </div>

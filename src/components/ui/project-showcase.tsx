@@ -39,12 +39,12 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ projects }) =>
             viewport={{ once: true }}
             className="text-lg text-gray-400"
           >
-            Companies choose Flowscape to build their landing pages.
+            Companies choose Flowscape to build their web applications.
           </motion.p>
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {projects.map((project, index) => (
             <motion.div
               key={project.name}

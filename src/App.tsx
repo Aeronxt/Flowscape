@@ -216,7 +216,7 @@ function App() {
                   className="text-gray-300 hover:text-white transition-colors px-4 py-2 rounded-full hover:bg-white/10"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => handleAuthClick('signin')}
+                  onClick={() => window.location.href = 'https://dashboard.flowscape.xyz/'}
                 >
                   Sign In
                 </motion.button>
@@ -373,7 +373,7 @@ function App() {
                 <motion.button
                   className="w-full text-gray-300 hover:text-white transition-colors py-3 px-4 rounded-xl hover:bg-white/10 font-medium"
                   onClick={() => {
-                    handleAuthClick('signin');
+                    window.location.href = 'https://dashboard.flowscape.xyz/';
                     setIsMobileMenuOpen(false);
                   }}
                   initial={{ opacity: 0, y: 20 }}
