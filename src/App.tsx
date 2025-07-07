@@ -14,13 +14,14 @@ import { LogoCarousel } from './components/ui/logo-carousel';
 import { FeaturesSectionWithHoverEffects } from './components/ui/features-section-hover';
 import { UIUXDesignFeature } from './components/ui/uiux-design-feature';
 import ScrollFloat from './components/ui/ScrollFloat';
-import ScrollReveal from './components/ui/ScrollReveal';
+// import ScrollReveal from './components/ui/ScrollReveal';
 import { FeatureSteps } from './components/ui/feature-steps';
 import { IconCloud } from './components/ui/icon-cloud';
 import TestimonialsSection from './components/ui/testimonials';
 import { ComparisonSection } from './components/ui/comparison-section';
 import ShowcaseSection from './components/ui/project-versions';
 import { PricingCard, type PricingCardProps } from './components/ui/animated-glassy-pricing';
+import { MagicText } from './components/ui/magic-text';
 
 // Type definitions
 type FeatureValue = string | boolean | number;
@@ -107,19 +108,21 @@ const InteractiveButton = ({ children, onClick, className = "", variant = "prima
 
 
 function App() {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user } = useAuth();
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<'Australia' | 'Bangladesh' | 'Worldwide' | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<'personal' | 'business'>('personal');
-  const { user } = useAuth();
 
-  const handleAuthClick = (mode: 'signin' | 'signup') => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
-  };
+  // const handleAuthClick = (mode: 'signin' | 'signup') => {
+  //   if (mode === 'signin') {
+  //     setIsAuthModalOpen(true);
+  //   } else {
+  //     setIsAuthModalOpen(true);
+  //   }
+  // };
 
   // Handle navbar scroll behavior
   React.useEffect(() => {
@@ -532,35 +535,12 @@ function App() {
           </motion.div>
 
           <div className="text-left space-y-8">
-            <ScrollReveal
-              baseOpacity={0}
-              enableBlur={true}
-              baseRotation={5}
-              blurStrength={10}
+            <MagicText
               textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
-            >
-              Flowscape was founded with a simple mission to help startups and small business owners build a powerful online identity without breaking the bank.
-            </ScrollReveal>
-            
-            <ScrollReveal
-              baseOpacity={0}
-              enableBlur={true}
-              baseRotation={5}
-              blurStrength={10}
-              textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
-            >
-              We believe every entrepreneur deserves a modern, professional website or app that doesn't cost a fortune or take months to launch. That's why we created an intuitive platform where your ideas can come to life designed, built, and launched in days.
-            </ScrollReveal>
-            
-            <ScrollReveal
-              baseOpacity={0}
-              enableBlur={true}
-              baseRotation={5}
-              blurStrength={10}
-              textClassName="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-300 leading-relaxed"
-            >
-              Our team of developers and creators work day and night to ensure you get the best experience and not the highest price tag. Whether you're just starting out or scaling fast, Flowscape is here to help you grow on your terms, at your pace.
-            </ScrollReveal>
+              text={
+                "Flowscape was founded with a simple mission to help startups and small business owners build a powerful online identity without breaking the bank. We believe every entrepreneur deserves a modern, professional website or app that doesn't cost a fortune or take months to launch. That's why we created an intuitive platform where your ideas can come to life designed, built, and launched in days. Our team of developers and creators work day and night to ensure you get the best experience and not the highest price tag. Whether you're just starting out or scaling fast, Flowscape is here to help you grow on your terms, at your pace."
+              }
+            />
           </div>
         </div>
 
@@ -1052,9 +1032,9 @@ function App() {
 
       {/* Auth Modal */}
       <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        initialMode={authMode}
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={user ? 'signin' : 'signup'}
       />
     </div>
       </PlanContext.Provider>
