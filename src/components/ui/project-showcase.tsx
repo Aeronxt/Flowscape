@@ -42,7 +42,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ projects }) =>
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
           {projects.map((project, index) => (
             <motion.div
               key={project.name}
@@ -51,12 +51,12 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ projects }) =>
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               // onClick={() => handleProjectClick(project.link)}
-              className="group cursor-pointer"
+              className="group cursor-pointer flex justify-center"
             >
               <PinContainer title={project.name} href={project.link}>
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-900/10 border border-purple-500/10 p-6 flex flex-col items-center justify-center w-[20rem] h-[20rem]">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-900/10 border border-purple-500/10 p-4 flex flex-col w-80 h-80 sm:w-[22rem] sm:h-[22rem]">
                   {/* Project Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-md">
+                  <div className="relative flex-1 overflow-hidden rounded-md mb-4">
                     <img
                       src={project.image}
                       alt={project.name}
@@ -66,10 +66,10 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ projects }) =>
                   </div>
 
                   {/* Project Info */}
-                  <div className="p-6 text-center">
-                    <h3 className="text-xl font-semibold text-white mb-2">{project.name}</h3>
-                    <p className="text-purple-400 text-sm mb-3">{project.type}</p>
-                    <p className="text-gray-400 text-sm line-clamp-2">{project.description}</p>
+                  <div className="text-center flex-shrink-0">
+                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 line-clamp-1">{project.name}</h3>
+                    <p className="text-purple-400 text-xs sm:text-sm mb-2">{project.type}</p>
+                    <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{project.description}</p>
                   </div>
                 </div>
               </PinContainer>
