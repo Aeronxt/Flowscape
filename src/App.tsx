@@ -495,7 +495,7 @@ function App() {
               variant="primary"
               className="w-full sm:w-auto px-6 md:px-8 py-3 text-sm md:text-base"
             >
-              Connect With Us
+              Spensit
             </InteractiveButton>
             <InteractiveButton 
               onClick={() => {
@@ -504,7 +504,7 @@ function App() {
               variant="secondary"
               className="w-full sm:w-auto px-6 md:px-8 py-3 text-sm md:text-base"
             >
-              What is Flowscape?
+              Ecommerce
             </InteractiveButton>
           </motion.div>
         </div>
